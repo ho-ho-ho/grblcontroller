@@ -23,19 +23,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
-
-
-
-
-
                 <com.joanzapata.iconify.widget.IconTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:text="On the fly cam"
                     tools:ignore="RelativeOverlap" />
-
 
             </RelativeLayout>
 
@@ -47,7 +40,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
                 <Spinner
                     android:id="@+id/job_type_spinner"
                     android:layout_width="match_parent"
@@ -56,33 +48,6 @@
                     android:text="Job type" />
 
             </RelativeLayout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             <RelativeLayout
                 android:id="@+id/cam_feed_rate_view"
@@ -142,6 +107,7 @@
                     tools:ignore="HardcodedText" />
 
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/cam_z_traversal_view"
                 android:clickable="true" android:focusable="true"
@@ -167,6 +133,7 @@
                     tools:ignore="HardcodedText" />
 
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/cam_z_step_view"
                 android:clickable="true" android:focusable="true"
@@ -192,6 +159,7 @@
                     tools:ignore="HardcodedText" />
 
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/cam_z_deep_view"
                 android:clickable="true" android:focusable="true"
@@ -272,6 +240,7 @@
                         />
 
                 </TableRow>
+
                 <TableRow tools:ignore="UselessParent">
 
                     <com.joanzapata.iconify.widget.IconButton
@@ -293,19 +262,7 @@
                         />
 
                 </TableRow>
-
-
             </TableLayout>
-
-
-
-
-
-
-
-
-
-
 
             <View android:layout_margin="4dp" android:layout_height="0.2dp" android:background="@color/colorDivider" android:layout_width="fill_parent"/>
 
@@ -327,11 +284,7 @@
                         android:layout_height="wrap_content" />
 
                 </TableRow>
-
             </TableLayout>
-
         </LinearLayout>
-
     </ScrollView>
-
 </layout>

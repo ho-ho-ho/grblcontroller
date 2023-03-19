@@ -61,6 +61,39 @@
             android:summary="@string/text_keep_screen_on_description"
             android:defaultValue="false" />
 
+        <SwitchPreference
+            android:key="@string/preference_cam_custom_button_1"
+            android:icon="@drawable/ic_filter_tilt_shift_black_24dp"
+            android:title="@string/text_cam_use_custom_button_1"
+            android:summary="@string/text_cam_use_custom_button_1_description"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:icon="@drawable/ic_touch_app_black_24dp"
+            android:key="@string/preference_cam_header"
+            android:lines="6"
+            android:title="@string/text_cam_header"
+            android:maxLength="2048"
+            android:defaultValue="G17\nG90\nG21\nM7\nM8\nG21\n"
+            android:gravity="top"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:background="@drawable/rounded_border_edit_text"
+            android:summary="@string/text_cam_header_description"/>
+
+        <EditTextPreference
+            android:icon="@drawable/ic_touch_app_black_24dp"
+            android:key="@string/preference_cam_footer"
+            android:lines="6"
+            android:title="@string/text_cam_footer"
+            android:maxLength="2048"
+            android:defaultValue="M9\nM30\n"
+            android:gravity="top"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:background="@drawable/rounded_border_edit_text"
+            android:summary="@string/text_cam_footer_description"/>
+
     </PreferenceScreen>
 
     <PreferenceScreen

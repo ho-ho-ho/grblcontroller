@@ -248,29 +248,27 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                 break;
 
             case R.id.custom_button_1:
+                if (!sharedPref.getBoolean(getString(R.string.preference_cam_custom_button_1), Constants.CAM_USE_CUSTOM_BUTTON_1)) {
+                    customButton(id, false);
+                } else {
+                    pointsCoords += String.valueOf(machineStatus.getWorkPosition().getCordX()) + ',' +
+                            String.valueOf(machineStatus.getWorkPosition().getCordY()) + ',' +
+                            String.valueOf(machineStatus.getWorkPosition().getCordZ()) + "\n";
 
-                pointsCoords+=String.valueOf( machineStatus.getWorkPosition().getCordX())+','+
-                        String.valueOf(machineStatus.getWorkPosition().getCordY())+','+
-                        String.valueOf(machineStatus.getWorkPosition().getCordZ())+"\n";
+                    File pointsFile = new File(getActivity().getExternalFilesDir(null), "points.txt");
 
-                //System.out.println(pointsCoords);
+                    try {
+                        FileOutputStream fos = new FileOutputStream(pointsFile);
+                        fos.write(pointsCoords.getBytes());
+                        fos.flush();
+                        fos.close();
 
-                File pointsFile;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                pointsFile = new File(getActivity().getExternalFilesDir(null), "points.txt");
-
-                try {
-                    FileOutputStream fos = new FileOutputStream(pointsFile);
-                    fos.write(pointsCoords.getBytes());
-                    fos.flush();
-                    fos.close();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    EventBus.getDefault().post(new UiToastEvent("new points file at " + getActivity().getExternalFilesDir(null), true, true));
                 }
-
-                EventBus.getDefault().post(new UiToastEvent("new points file at "+getActivity().getExternalFilesDir(null) , true, true));
-
                 break;
 
             case R.id.custom_button_2:

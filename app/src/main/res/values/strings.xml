@@ -82,6 +82,9 @@
     <string name="preference_remember_last_file_location" translatable="false">remember_last_file_location</string>
     <string name="most_recent_selected_file" translatable="false">most_recent_selected_file</string>
     <string name="preference_single_step_mode" translatable="false">preference_single_step_mode</string>
+    <string name="preference_cam_custom_button_1" translatable="false">preference_cam_custom_button_1</string>
+    <string name="preference_cam_header" translatable="false">preference_cam_header</string>
+    <string name="preference_cam_footer" translatable="false">preference_cam_footer</string>
 
     <string name="text_yes_confirm">Yes</string>
     <string name="text_no_confirm">No</string>
@@ -414,6 +417,13 @@
     <string name="text_cam_help">"creare un percorso "</string>
     <string name="preference_cam_tool_dia">10</string>
     <string name="text_cam_tool_dia">tool diameter</string>
+    <string name="text_cam_use_custom_button_1">CAM: Use Custom Button 1</string>
+    <string name="text_cam_use_custom_button_1_description">Use Custom Button 1 to generate points file.</string>
+    <string name="text_cam_header">CAM: NC file header</string>
+    <string name="text_cam_header_description">GCode to insert before the generated toolpath.</string>
+    <string name="text_cam_footer">CAM: NC file footer</string>
+    <string name="text_cam_footer_description">GCode to insert after the generated toolpath.</string>
+
 
     <string-array name="job_type_list">
         <item>rectangle facing feeding X</item>
