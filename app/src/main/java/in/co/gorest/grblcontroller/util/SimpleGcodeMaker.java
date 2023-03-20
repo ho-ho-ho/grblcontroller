@@ -199,9 +199,9 @@ public class SimpleGcodeMaker {
         boolean sw = true;
         String gcode = "(line cut)\n";
         gcode += this.header;
-        gcode += "G00 Z" + (this.ztraversal + this.zfrom) + '\n';
-        gcode += "X" + this.xcenter + " Y" + this.ycenter + "\n";
         for (int i = 1; i <= (int) pass.first; i++) {
+            gcode += "G00 Z" + (this.ztraversal + this.zfrom) + '\n';
+            gcode += "X" + this.xcenter + " Y" + this.ycenter + "\n";
             gcode += "G01 Z" + (this.zfrom - ((double) pass.second * i)) + " F" + this.feedrate + "\n";
             if (sw) {
                 gcode += "X" + this.xcirc + " Y" + this.ycirc + "\n";
@@ -219,9 +219,9 @@ public class SimpleGcodeMaker {
         Pair pass = this.pass(Math.abs(this.zdeep), this.zstep, this.Zaprox_pass);//npass,step
         String gcode = "";
         gcode += this.header;
-        gcode += "G00 Z" + (this.zfrom + this.ztraversal) + '\n';
-        gcode += "X" + startX + " Y" + startY + "\n";
         for (int i = 1; i <= (int) pass.first; i++) {
+            gcode += "G00 Z" + (this.zfrom + this.ztraversal) + '\n';
+            gcode += "X" + startX + " Y" + startY + "\n";
             gcode += "G01 Z" + (this.zfrom - ((double) pass.second * i)) + " F" + this.feedrate + "\n";
             gcode += cut_path;
         }
