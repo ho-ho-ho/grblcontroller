@@ -246,15 +246,30 @@ public class GrblUsbSerialService extends Service {
         @Override
         public void onReceive(Context arg0, Intent arg1){
             if(Objects.equals(arg1.getAction(), ACTION_USB_PERMISSION)){
-                boolean granted = Objects.requireNonNull(arg1.getExtras()).getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
-                if(granted){
-                    Intent intent = new Intent(ACTION_USB_PERMISSION_GRANTED);
-                    arg0.sendBroadcast(intent);
-                    connection = usbManager.openDevice(device);
-                    new ConnectionThread().start();
-                }else{
-                    Intent intent = new Intent(ACTION_USB_PERMISSION_NOT_GRANTED);
-                    arg0.sendBroadcast(intent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    UsbDevice usb_device = (UsbDevice) arg1.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    if (arg1.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        if (usb_device != null) {
+                            Intent intent = new Intent(ACTION_USB_PERMISSION_GRANTED);
+                            arg0.sendBroadcast(intent);
+                            connection = usbManager.openDevice(usb_device);
+                            new ConnectionThread().start();
+                        } else {
+                            Intent intent = new Intent(ACTION_USB_PERMISSION_NOT_GRANTED);
+                            arg0.sendBroadcast(intent);
+                        }
+                    }
+                } else {
+                    boolean granted = Objects.requireNonNull(arg1.getExtras()).getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                    if(granted){
+                        Intent intent = new Intent(ACTION_USB_PERMISSION_GRANTED);
+                        arg0.sendBroadcast(intent);
+                        connection = usbManager.openDevice(device);
+                        new ConnectionThread().start();
+                    }else{
+                        Intent intent = new Intent(ACTION_USB_PERMISSION_NOT_GRANTED);
+                        arg0.sendBroadcast(intent);
+                    }
                 }
             }else if(Objects.equals(arg1.getAction(), ACTION_USB_ATTACHED)) {
                 if(!serialPortConnected) findSerialPortDevice();
@@ -322,9 +337,14 @@ public class GrblUsbSerialService extends Service {
     /*
      * Request user permission. The response will be received in the BroadcastReceiver
      */
-    @SuppressLint("UnspecifiedImmutableFlag")
     private void requestUserPermission() {
-        PendingIntent mPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        int pendingFlags;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingFlags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+        } else {
+            pendingFlags = 0;
+        }
+        PendingIntent mPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), pendingFlags);
         usbManager.requestPermission(device, mPendingIntent);
     }
 
