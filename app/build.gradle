@@ -79,7 +79,6 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.3.1'
     implementation 'com.github.warkiz:IndicatorSeekBar:v2.1.1'
     implementation 'com.github.felHR85:UsbSerial:6.1.0'
-    implementation 'com.github.nbsp-team:MaterialFilePicker:85292dceb0'
     implementation 'com.github.satyan:sugar:1.5'
     implementation 'com.github.GrenderG:Toasty:1.5.2'
 

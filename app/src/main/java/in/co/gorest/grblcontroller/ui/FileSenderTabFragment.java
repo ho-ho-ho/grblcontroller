@@ -21,12 +21,12 @@
 
 package in.co.gorest.grblcontroller.ui;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,19 +41,16 @@ import androidx.databinding.DataBindingUtil;
 
 import com.joanzapata.iconify.widget.IconButton;
 import com.joanzapata.iconify.widget.IconTextView;
-import com.nbsp.materialfilepicker.MaterialFilePicker;
-import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.regex.Pattern;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import in.co.gorest.grblcontroller.GrblController;
 import in.co.gorest.grblcontroller.R;
@@ -113,11 +110,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
 
         IconTextView selectGcodeFile = view.findViewById(R.id.select_gcode_file);
         selectGcodeFile.setOnClickListener(view14 -> {
-            if(hasExternalStorageReadPermission()){
-                getFilePicker();
-            }else{
-                askExternalReadPermission();
-            }
+            getFilePicker();
         });
 
         final IconButton enableChecking = view.findViewById(R.id.enable_checking);
@@ -130,7 +123,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
 
         final IconButton startStreaming = view.findViewById(R.id.start_streaming);
         startStreaming.setOnClickListener(view12 -> {
-            if(fileSender.getGcodeFile() == null){
+            if(fileSender.getGcodeUri() == null){
                 EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_no_gcode_file_selected), true, true));
                 return;
             }
@@ -241,17 +234,16 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == Constants.FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
+            Uri uri = data.getData();
+            try {
+                InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
 
-            if(filePath != null){
-                fileSender.setGcodeFile(new File(filePath));
-                if(fileSender.getGcodeFile().exists()){
-                    fileSender.setElapsedTime("00:00:00");
-                    new ReadFileAsyncTask().execute(fileSender.getGcodeFile());
-                    sharedPref.edit().putString(getString(R.string.most_recent_selected_file), fileSender.getGcodeFile().getAbsolutePath()).apply();
-                }else{
-                    EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_file_not_found), true, true));
-                }
+                fileSender.setGcodeUri(uri);
+                fileSender.setElapsedTime("00:00:00");
+                new ReadFileAsyncTask().execute(inputStream);
+                sharedPref.edit().putString(getString(R.string.most_recent_selected_file), "stream").apply();
+            } catch (FileNotFoundException e) {
+                EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_file_not_found), true, true));
             }
         }
 
@@ -326,19 +318,19 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         }
     }
 
-    private static class ReadFileAsyncTask extends AsyncTask<File, Integer, Integer> {
+    private static class ReadFileAsyncTask extends AsyncTask<InputStream, Integer, Integer> {
 
         protected void onPreExecute(){
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_READING);
             this.initFileSenderListener();
         }
 
-        protected Integer doInBackground(File... file){
+        protected Integer doInBackground(InputStream... stream){
             Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
 
             Integer lines = 0;
             try{
-                BufferedReader reader = new BufferedReader(new FileReader(file[0])); String sCurrentLine;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream[0])); String sCurrentLine;
                 GcodeCommand gcodeCommand = new GcodeCommand();
                 while((sCurrentLine = reader.readLine()) != null){
                     gcodeCommand.setCommand(sCurrentLine);
@@ -379,48 +371,10 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
     }
 
     private void getFilePicker(){
-
-        String rootPath = "/storage/";
-
-        if(sharedPref.getBoolean(getString(R.string.preference_remember_last_file_location), true)){
-            String recentFile = sharedPref.getString(getString(R.string.most_recent_selected_file), null);
-            if(recentFile != null){
-                File f = new File(recentFile);
-                do{
-                    f = new File(Objects.requireNonNull(f.getParent()));
-                    rootPath = f.getAbsolutePath();
-                }while (!f.isDirectory());
-            }
-        }
-
-        new MaterialFilePicker()
-                .withActivity(getActivity())
-                .withCloseMenu(true)
-                .withRequestCode(Constants.FILE_PICKER_REQUEST_CODE)
-                .withHiddenFiles(false)
-                .withFilter(Pattern.compile(Constants.SUPPORTED_FILE_TYPES_STRING, Pattern.CASE_INSENSITIVE))
-                .withTitle(GrblUtils.implode(" | ", Constants.SUPPORTED_FILE_TYPES))
-                .withPath(rootPath)
-                .start();
-
-    }
-
-    private Boolean hasExternalStorageReadPermission(){
-        boolean hasPermission = true;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(requireActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                hasPermission = false;
-            }
-        }
-        return hasPermission;
-    }
-
-    private void askExternalReadPermission(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_READ_PERMISSIONS);
-        }else{
-            EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_no_external_read_permission), true, true));
-        }
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivityForResult(intent, Constants.FILE_PICKER_REQUEST_CODE);
     }
 
     @Override

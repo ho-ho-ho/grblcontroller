@@ -22,10 +22,10 @@
 package in.co.gorest.grblcontroller.listeners;
 
 
+import android.net.Uri;
+
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-
-import java.io.File;
 
 import in.co.gorest.grblcontroller.BR;
 import in.co.gorest.grblcontroller.model.Constants;
@@ -34,7 +34,7 @@ import in.co.gorest.grblcontroller.util.GrblUtils;
 public class FileSenderListener extends BaseObservable {
 
     private String gcodeFileName;
-    private File gcodeFile;
+    private Uri gcodeUri;
     private Integer rowsInFile;
     private Integer rowsSent;
 
@@ -61,7 +61,8 @@ public class FileSenderListener extends BaseObservable {
     private FileSenderListener(){
         this.setStatus(STATUS_IDLE);
         this.gcodeFileName = " " + GrblUtils.implode(" | ", Constants.SUPPORTED_FILE_TYPES);
-        this.gcodeFile = null;
+        //this.gcodeFile = null;
+        this.gcodeUri = null;
         this.rowsInFile = 0;
         this.rowsSent = 0;
     }
@@ -73,12 +74,20 @@ public class FileSenderListener extends BaseObservable {
         notifyPropertyChanged(BR.gcodeFileName);
     }
 
-    @Bindable
+    /*@Bindable
     public File getGcodeFile(){ return this.gcodeFile; }
     public void setGcodeFile(File gcodeFile){
         this.gcodeFile = gcodeFile;
         this.setGcodeFileName(gcodeFile.getName());
         notifyPropertyChanged(BR.gcodeFile);
+    }*/
+
+    @Bindable
+    public Uri getGcodeUri() { return this.gcodeUri; }
+    public void setGcodeUri(Uri uri) {
+        this.gcodeUri = uri;
+        this.setGcodeFileName(uri.getPath());
+        notifyPropertyChanged(BR.gcodeUri);
     }
 
     @Bindable

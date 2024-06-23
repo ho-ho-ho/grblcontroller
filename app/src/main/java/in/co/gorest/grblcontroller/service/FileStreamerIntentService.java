@@ -38,6 +38,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Timer;
@@ -108,7 +109,7 @@ public class FileStreamerIntentService extends IntentService{
     @Override
     protected void onHandleIntent(Intent intent){
         fileSenderListener = FileSenderListener.getInstance();
-        if(fileSenderListener.getGcodeFile() == null){
+        if(fileSenderListener.getGcodeUri() == null){
             EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_no_gcode_file_selected), true, true));
             return;
         }
@@ -152,7 +153,7 @@ public class FileStreamerIntentService extends IntentService{
 
         if(isCheckMode){
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
-                startForeground(Constants.FILE_STREAMING_NOTIFICATION_ID, getNotification(getString(R.string.text_file_checking_started), fileSenderListener.getGcodeFile().getName()));
+                startForeground(Constants.FILE_STREAMING_NOTIFICATION_ID, getNotification(getString(R.string.text_file_checking_started), fileSenderListener.getGcodeFileName()));
             }
 
             if(defaultConnectionType != null && defaultConnectionType.equals(Constants.SERIAL_CONNECTION_TYPE_BLUETOOTH)){
@@ -162,7 +163,7 @@ public class FileStreamerIntentService extends IntentService{
             }
         }else{
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
-                startForeground(Constants.FILE_STREAMING_NOTIFICATION_ID, getNotification(getString(R.string.text_file_streaming_started), fileSenderListener.getGcodeFile().getName()));
+                startForeground(Constants.FILE_STREAMING_NOTIFICATION_ID, getNotification(getString(R.string.text_file_streaming_started), fileSenderListener.getGcodeFileName()));
             }
 
             this.startStreaming(5);
@@ -204,7 +205,7 @@ public class FileStreamerIntentService extends IntentService{
         BufferedReader br; String sCurrentLine;
 
         try{
-            br = new BufferedReader(new FileReader(fileSenderListener.getGcodeFile()));
+            br = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(fileSenderListener.getGcodeUri())));
             int linesSent = 0;
             GcodeCommand gcodeCommand = new GcodeCommand();
             while ((sCurrentLine = br.readLine()) != null) {
@@ -242,7 +243,7 @@ public class FileStreamerIntentService extends IntentService{
 
         try{
 
-            BufferedReader br = new BufferedReader(new FileReader(fileSenderListener.getGcodeFile()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(fileSenderListener.getGcodeUri())));
             int linesSent = 0;
             String sCurrentLine;
             GcodeCommand gcodeCommand = new GcodeCommand();
