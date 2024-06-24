@@ -64,6 +64,63 @@
     </PreferenceScreen>
 
     <PreferenceScreen
+        android:key="probing_preferences_flashcard"
+        android:icon="@drawable/ic_open_with_black_24dp"
+        android:title="@string/text_probing_preferences"
+        android:summary="customize probing panel preferences">
+
+        <Preference android:title="@string/text_probing_preferences" />
+
+        <in.co.gorest.grblcontroller.helpers.MyEditTextPreference
+            android:icon="@drawable/ic_format_list_numbered_black_24dp"
+            android:defaultValue="6.0"
+            android:inputType="numberDecimal"
+            android:key="@string/preference_probing_tool_diameter"
+            android:title="@string/text_probing_tool_diameter"
+            android:summary="" />
+
+        <in.co.gorest.grblcontroller.helpers.MyEditTextPreference
+            android:icon="@drawable/ic_format_list_numbered_black_24dp"
+            android:defaultValue="10.0"
+            android:inputType="numberDecimal"
+            android:key="@string/preference_probing_touch_plate_x_offset"
+            android:title="@string/text_probing_touch_plate_x_offset"
+            android:summary="" />
+
+        <in.co.gorest.grblcontroller.helpers.MyEditTextPreference
+            android:icon="@drawable/ic_format_list_numbered_black_24dp"
+            android:defaultValue="10.0"
+            android:inputType="numberDecimal"
+            android:key="@string/preference_probing_touch_plate_y_offset"
+            android:title="@string/text_probing_touch_plate_y_offset"
+            android:summary="" />
+
+        <in.co.gorest.grblcontroller.helpers.MyEditTextPreference
+            android:icon="@drawable/ic_format_list_numbered_black_24dp"
+            android:defaultValue="10.0"
+            android:inputType="numberDecimal"
+            android:key="@string/preference_probing_touch_distance_xy"
+            android:title="@string/text_probing_touch_distance_xy"
+            android:summary="" />
+
+        <in.co.gorest.grblcontroller.helpers.MyEditTextPreference
+            android:icon="@drawable/ic_format_list_numbered_black_24dp"
+            android:defaultValue="10.0"
+            android:inputType="numberDecimal"
+            android:key="@string/preference_probing_touch_depth_xy"
+            android:title="@string/text_probing_touch_depth_xy"
+            android:summary="" />
+
+        <in.co.gorest.grblcontroller.helpers.MyEditTextPreference
+            android:icon="@drawable/ic_format_list_numbered_black_24dp"
+            android:defaultValue="10.0"
+            android:inputType="numberDecimal"
+            android:key="@string/preference_probing_plate_thickness"
+            android:title="@string/text_touch_plate_thickness"
+            android:summary="" />
+    </PreferenceScreen>
+
+    <PreferenceScreen
         android:key="jogging_preferences_flashcard"
         android:icon="@drawable/ic_open_with_black_24dp"
         android:title="@string/text_jogging_preferences"
