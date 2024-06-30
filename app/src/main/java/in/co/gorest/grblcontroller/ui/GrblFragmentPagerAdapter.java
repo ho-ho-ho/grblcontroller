@@ -25,31 +25,37 @@ package in.co.gorest.grblcontroller.ui;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-public class GrblFragmentPagerAdapter extends FragmentPagerAdapter {
+public class GrblFragmentPagerAdapter extends FragmentStateAdapter {
 
     public final int tabCount;
 
-    public GrblFragmentPagerAdapter(FragmentManager fragmentManager, int tabCount) {
-        super(fragmentManager);
+    public GrblFragmentPagerAdapter(FragmentActivity activity, int tabCount) {
+        super(activity);
         this.tabCount = tabCount;
     }
 
     @NonNull
     @Override
-    public Fragment getItem(int position) {
+    public Fragment createFragment(int position) {
         switch (position) {
-            case 1: return FileSenderTabFragment.newInstance();
-            case 2: return ProbingTabFragment.newInstance();
-            case 3: return ConsoleTabFragment.newInstance();
-            case 4: return CamTabFragment.newInstance();
-            default: return JoggingTabFragment.newInstance();
+            case 1:
+                return FileSenderTabFragment.newInstance();
+            case 2:
+                return ProbingTabFragment.newInstance();
+            case 3:
+                return ConsoleTabFragment.newInstance();
+            case 4:
+                return CamTabFragment.newInstance();
+            default:
+                return JoggingTabFragment.newInstance();
         }
     }
 
     @Override
-    public int getCount() {return tabCount; }
-
+    public int getItemCount() {
+        return tabCount;
+    }
 }

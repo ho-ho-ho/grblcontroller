@@ -1,0 +1,129 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="androidx.databinding.ObservableBoolean" />
+
+        <variable
+            name="machineStatus"
+            type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
+
+        <variable
+            name="posLeftValid"
+            type="ObservableBoolean" />
+
+        <variable
+            name="posRightValid"
+            type="ObservableBoolean" />
+
+        <variable
+            name="posFrontValid"
+            type="ObservableBoolean" />
+
+        <variable
+            name="posBackValid"
+            type="ObservableBoolean" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/probe_outside_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:padding="4dp"
+            tools:ignore="UnusedAttribute"
+            tools:targetApi="m">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/text_probing_center" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="0.2dp"
+            android:layout_margin="4dp"
+            android:background="@color/colorDivider" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:text="@string/text_probing_center_probe_from" />
+
+            <ToggleButton
+                android:id="@+id/probing_center_outside_btn"
+                android:textOff="@string/text_probing_center_inside"
+                android:textOn="@string/text_probing_center_outside"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:rowCount="3">
+
+            <Space />
+
+            <com.joanzapata.iconify.widget.IconButton
+                android:id="@+id/probe_center_y_back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@{posBackValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
+                android:text="@string/text_probing_y_location_back" />
+
+            <Space />
+
+            <com.joanzapata.iconify.widget.IconButton
+                android:id="@+id/probe_center_x_left_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@{posLeftValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
+                android:text="@string/text_probing_x_location_left" />
+
+            <Space />
+
+            <com.joanzapata.iconify.widget.IconButton
+                android:id="@+id/probe_center_x_right_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@{posRightValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
+                android:text="@string/text_probing_x_location_right" />
+
+            <Space />
+
+            <com.joanzapata.iconify.widget.IconButton
+                android:id="@+id/probe_center_y_front_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@{posFrontValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
+                android:text="@string/text_probing_y_location_front" />
+
+        </GridLayout>
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/probe_center_apply_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="@{posLeftValid &amp;&amp; posRightValid || posBackValid &amp;&amp; posFrontValid}"
+            android:text="@string/text_probing_center_apply" />
+
+    </LinearLayout>
+</layout>

@@ -290,6 +290,14 @@
     <string name="text_probing_y_location_none">none</string>
     <string name="text_probing_y_location_front">front</string>
     <string name="text_probing_probe_z">Probe Z</string>
+    <string name="text_probing_tlo_probe_reference">Probe reference</string>
+    <string name="text_probing_tlo_probe_reference_desc">Probes the current tool. Does not change WCS or TLO. Do this with the first tool before changing.</string>
+    <string name="text_probing_tlo_probe_reference_success">Probe reference set successfully.</string>
+    <string name="text_probing_center">Probe center</string>
+    <string name="text_probing_center_probe_from">Probe from</string>
+    <string name="text_probing_center_inside">Inside</string>
+    <string name="text_probing_center_outside">Outside</string>
+    <string name="text_probing_center_apply">Apply</string>
     <string name="text_touch_plate_thickness_desc">Touch plate thickness</string>
     <string name="text_touch_plate_thickness">Plate thickness</string>
     <string name="text_distance_to_probe">Distance to probe</string>
@@ -436,6 +444,9 @@
     <string name="preference_cam_tool_dia">10</string>
     <string name="text_cam_tool_dia">tool diameter</string>
     <string name="text_probing_preferences">Probing preferences</string>
+    <string name="axis_x">X Axis</string>
+    <string name="axis_y">Y Axis</string>
+    <string name="axis_z">Z Axis</string>
 
     <string-array name="job_type_list">
         <item>rectangle facing feeding X</item>
