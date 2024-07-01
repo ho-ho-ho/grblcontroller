@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableDouble;
 
 import com.joanzapata.iconify.widget.IconButton;
 
@@ -31,7 +33,8 @@ public class ProbingTloFragment extends BaseFragment {
     private EnhancedSharedPreferences sharedPref;
 
     private Double startZ = null;
-    private Double referenceZ = null;
+    private ObservableDouble referenceZ = new ObservableDouble();
+    private ObservableBoolean referenceZValid = new ObservableBoolean(false);
     private String distanceMode;
     private String unitSelection;
 
@@ -50,8 +53,9 @@ public class ProbingTloFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         machineStatus = MachineStatusListener.getInstance();
         sharedPref = EnhancedSharedPreferences.getInstance(requireActivity().getApplicationContext(), getString(R.string.shared_preference_key));
-        if (savedInstanceState != null) {
-            referenceZ = savedInstanceState.getDouble("referenceZ", 0.0);
+        if (savedInstanceState != null && savedInstanceState.containsKey("referenceZ")) {
+            referenceZ.set(savedInstanceState.getDouble("referenceZ"));
+            referenceZValid.set(true);
         }
 
         EventBus.getDefault().register(this);
@@ -66,8 +70,8 @@ public class ProbingTloFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (referenceZ != null) {
-            outState.putDouble("referenceZ", referenceZ);
+        if (referenceZValid.get()) {
+            outState.putDouble("referenceZ", referenceZ.get());
         }
     }
 
@@ -77,6 +81,8 @@ public class ProbingTloFragment extends BaseFragment {
 
         FragmentProbingTloBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_probing_tlo, container, false);
         binding.setMachineStatus(machineStatus);
+        binding.setReferenceZValid(referenceZValid);
+        binding.setReferenceZ(referenceZ);
         View view = binding.getRoot();
 
         IconButton probeReferenceBtn = view.findViewById(R.id.start_tlo_reference);
@@ -145,11 +151,11 @@ public class ProbingTloFragment extends BaseFragment {
         fragmentInteractionListener.onGcodeCommandReceived("G53G0Z" + startZ);
 
         if (probeReference) {
-            referenceZ = event.getProbeCordZ();
-            fragmentInteractionListener.onGcodeCommandReceived(GrblUtils.GRBL_VIEW_GCODE_PARAMETERS_COMMAND);
+            referenceZ.set(event.getProbeCordZ());
+            referenceZValid.set(true);
             EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_probing_tlo_probe_reference_success)));
         } else {
-            double toolOffset = referenceZ - event.getProbeCordZ();
+            double toolOffset = referenceZ.get() - event.getProbeCordZ();
             fragmentInteractionListener.onGcodeCommandReceived("G43.1Z" + toolOffset);
             fragmentInteractionListener.onGcodeCommandReceived(GrblUtils.GRBL_VIEW_GCODE_PARAMETERS_COMMAND);
             EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_probe_success_with_tlo)));

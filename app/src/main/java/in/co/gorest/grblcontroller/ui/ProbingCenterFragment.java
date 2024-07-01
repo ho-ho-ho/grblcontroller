@@ -63,6 +63,7 @@ public class ProbingCenterFragment extends BaseFragment {
     private double posRight = 0.0;
     private double posFront = 0.0;
     private double posBack = 0.0;
+    private boolean fromOutside = false;
 
     public ProbingCenterFragment() {
     }
@@ -135,11 +136,13 @@ public class ProbingCenterFragment extends BaseFragment {
         View view = binding.getRoot();
 
         ToggleButton outsideBtn = view.findViewById(R.id.probing_center_outside_btn);
-        outsideBtn.setOnClickListener(isChecked -> {
+        fromOutside = outsideBtn.isChecked();
+        outsideBtn.setOnClickListener(v -> {
             posLeftValid.set(false);
             posRightValid.set(false);
             posBackValid.set(false);
             posFrontValid.set(false);
+            fromOutside = outsideBtn.isChecked();
         });
 
         IconButton leftBtn = view.findViewById(R.id.probe_center_x_left_btn);
@@ -197,7 +200,7 @@ public class ProbingCenterFragment extends BaseFragment {
         return view;
     }
 
-    private void probeXYAxis(String axis, int direction, double probeTo) {
+    private void probeXYAxis(double probeTo) {
         double touchDistanceXY = Double.parseDouble(
                 sharedPref.getString(getString(R.string.preference_probing_touch_distance_xy), "10.0")
         );
@@ -207,12 +210,17 @@ public class ProbingCenterFragment extends BaseFragment {
         double touchFeedrate = Double.parseDouble(
                 sharedPref.getString(getString(R.string.preference_probing_feed_rate), "50.0")
         );
-        double relativeMove = (direction < 0) ? -touchDistanceXY : touchDistanceXY;
+        double relativeMove = (currentDirection == Direction.Minus) ? -touchDistanceXY : touchDistanceXY;
 
         fragmentInteractionListener.onGcodeCommandReceived("G91");
-        fragmentInteractionListener.onGcodeCommandReceived("G53G0 " + axis + (probeTo + relativeMove));
-        fragmentInteractionListener.onGcodeCommandReceived("G0 Z-" + touchDepthXY);
-        fragmentInteractionListener.onGcodeCommandReceived("G38.3 " + axis + (-relativeMove) + " F" + touchFeedrate);
+        if (fromOutside) {
+            fragmentInteractionListener.onGcodeCommandReceived("G53G0 " + currentAxis.name() + (probeTo + relativeMove));
+            fragmentInteractionListener.onGcodeCommandReceived("G0 Z-" + touchDepthXY);
+            fragmentInteractionListener.onGcodeCommandReceived("G38.3 " + currentAxis.name() + (-relativeMove) + " F" + touchFeedrate);
+        } else {
+            fragmentInteractionListener.onGcodeCommandReceived("G0 Z-" + touchDepthXY);
+            fragmentInteractionListener.onGcodeCommandReceived("G38.3 " + currentAxis.name() + relativeMove + " F" + touchFeedrate);
+        }
         fragmentInteractionListener.onGcodeCommandReceived("G90");
     }
 
@@ -237,9 +245,15 @@ public class ProbingCenterFragment extends BaseFragment {
                 }
                 break;
         }
-        fragmentInteractionListener.onGcodeCommandReceived("G53G0" + currentAxis.name() + (probedPosition + currentDirection.value()));
-        fragmentInteractionListener.onGcodeCommandReceived("G53G0Z" + probeStartPosition.getCordZ());
-        fragmentInteractionListener.onGcodeCommandReceived("G53G0" + currentAxis.name() + start);
+
+        if (fromOutside) {
+            fragmentInteractionListener.onGcodeCommandReceived("G53G0" + currentAxis.name() + (probedPosition + currentDirection.value()));
+            fragmentInteractionListener.onGcodeCommandReceived("G53G0Z" + probeStartPosition.getCordZ());
+            fragmentInteractionListener.onGcodeCommandReceived("G53G0" + currentAxis.name() + start);
+        } else {
+            fragmentInteractionListener.onGcodeCommandReceived("G53G0" + currentAxis.name() + start);
+            fragmentInteractionListener.onGcodeCommandReceived("G53G0Z" + probeStartPosition.getCordZ());
+        }
     }
 
     private void applyCenter(Axis axis, double center) {
@@ -261,7 +275,7 @@ public class ProbingCenterFragment extends BaseFragment {
             unitSelection = machineStatus.getParserState().unitSelection;
 
             probeStartPosition = machineStatus.getMachinePosition();
-            probeXYAxis(currentAxis.name(), currentDirection == Direction.Plus ? 1 : -1, probeStartPosition.getCordX());
+            probeXYAxis(probeStartPosition.getCordX());
         }, (Constants.GRBL_STATUS_UPDATE_INTERVAL + 100));
     }
 

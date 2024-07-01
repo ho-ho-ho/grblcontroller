@@ -68,6 +68,7 @@
 
             <ToggleButton
                 android:id="@+id/probing_center_outside_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
                 android:textOff="@string/text_probing_center_inside"
                 android:textOn="@string/text_probing_center_outside"
                 android:layout_width="wrap_content"
@@ -84,6 +85,7 @@
 
             <com.joanzapata.iconify.widget.IconButton
                 android:id="@+id/probe_center_y_back_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@{posBackValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
@@ -93,6 +95,7 @@
 
             <com.joanzapata.iconify.widget.IconButton
                 android:id="@+id/probe_center_x_left_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@{posLeftValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
@@ -102,6 +105,7 @@
 
             <com.joanzapata.iconify.widget.IconButton
                 android:id="@+id/probe_center_x_right_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@{posRightValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
@@ -111,6 +115,7 @@
 
             <com.joanzapata.iconify.widget.IconButton
                 android:id="@+id/probe_center_y_front_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@{posFrontValid ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
@@ -122,7 +127,7 @@
             android:id="@+id/probe_center_apply_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:enabled="@{posLeftValid &amp;&amp; posRightValid || posBackValid &amp;&amp; posFrontValid}"
+            android:enabled="@{(machineStatus.state.equals(machineStatus.STATE_IDLE)) &amp;&amp; ((posLeftValid &amp;&amp; posRightValid) || (posBackValid &amp;&amp; posFrontValid))}"
             android:text="@string/text_probing_center_apply" />
 
     </LinearLayout>
