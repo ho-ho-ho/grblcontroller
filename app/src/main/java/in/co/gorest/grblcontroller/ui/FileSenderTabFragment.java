@@ -235,16 +235,16 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
 
         if(requestCode == Constants.FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
             Uri uri = data.getData();
-            try {
-                InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
+            //try {
+                //InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
 
                 fileSender.setGcodeUri(uri);
                 fileSender.setElapsedTime("00:00:00");
-                new ReadFileAsyncTask().execute(inputStream);
+                new ReadFileAsyncTask().execute(uri);
                 sharedPref.edit().putString(getString(R.string.most_recent_selected_file), "stream").apply();
-            } catch (FileNotFoundException e) {
+            /*} catch (FileNotFoundException e) {
                 EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_file_not_found), true, true));
-            }
+            }*/
         }
 
     }
@@ -318,19 +318,20 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         }
     }
 
-    private static class ReadFileAsyncTask extends AsyncTask<InputStream, Integer, Integer> {
+    private static class ReadFileAsyncTask extends AsyncTask<Uri, Integer, Integer> {
 
         protected void onPreExecute(){
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_READING);
             this.initFileSenderListener();
         }
 
-        protected Integer doInBackground(InputStream... stream){
+        protected Integer doInBackground(Uri... uris){
             Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
 
             Integer lines = 0;
             try{
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream[0])); String sCurrentLine;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(GrblController.getInstance().getContentResolver().openInputStream(uris[0])));
+                String sCurrentLine;
                 GcodeCommand gcodeCommand = new GcodeCommand();
                 while((sCurrentLine = reader.readLine()) != null){
                     gcodeCommand.setCommand(sCurrentLine);
