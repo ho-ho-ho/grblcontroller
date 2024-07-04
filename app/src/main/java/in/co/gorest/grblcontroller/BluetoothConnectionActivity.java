@@ -96,6 +96,11 @@ public class BluetoothConnectionActivity extends GrblActivity {
     public void onStart() {
         super.onStart();
 
+        if ((checkSelfPermission("android.permission.BLUETOOTH_CONNECT") == PackageManager.PERMISSION_DENIED)
+                || (checkSelfPermission("android.permission.BLUETOOTH_SCAN") == PackageManager.PERMISSION_DENIED)) {
+            requestPermissions(new String[]{"android.permission.BLUETOOTH_CONNECT", "android.permission.BLUETOOTH_SCAN"}, 0);
+        }
+
         if (!bluetoothAdapter.isEnabled()) {
             Thread thread = new Thread() {
                 @Override
