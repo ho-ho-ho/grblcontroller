@@ -79,24 +79,15 @@ public class FileSenderListener extends BaseObservable {
 
     @Bindable
     public String getGcodeFileName(){ return this.gcodeFileName; }
-    private void setGcodeFileName(String gcodeFileName){
+    public void setGcodeFileName(String gcodeFileName){
         this.gcodeFileName = gcodeFileName;
         notifyPropertyChanged(BR.gcodeFileName);
     }
-
-    /*@Bindable
-    public File getGcodeFile(){ return this.gcodeFile; }
-    public void setGcodeFile(File gcodeFile){
-        this.gcodeFile = gcodeFile;
-        this.setGcodeFileName(gcodeFile.getName());
-        notifyPropertyChanged(BR.gcodeFile);
-    }*/
 
     @Bindable
     public Uri getGcodeUri() { return this.gcodeUri; }
     public void setGcodeUri(Uri uri) {
         this.gcodeUri = uri;
-        this.setGcodeFileName(uri.getPath());
         notifyPropertyChanged(BR.gcodeUri);
     }
 

@@ -26,11 +26,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -236,7 +238,12 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
 
         if(requestCode == Constants.FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
             Uri uri = data.getData();
+            Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+            int idx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            cursor.moveToFirst();
+
             fileSender.setGcodeUri(uri);
+            fileSender.setGcodeFileName(cursor.getString(idx));
             fileSender.setElapsedTime("00:00:00");
             new ReadFileAsyncTask().execute(uri);
             sharedPref.edit().putString(getString(R.string.most_recent_selected_file), "stream").apply();
