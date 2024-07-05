@@ -28,6 +28,7 @@ import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 import in.co.gorest.grblcontroller.BR;
+import in.co.gorest.grblcontroller.model.Bounds;
 import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.util.GrblUtils;
 
@@ -39,6 +40,7 @@ public class FileSenderListener extends BaseObservable {
     private Integer rowsSent;
 
     private String status;
+    private Bounds bounds;
 
     public static final String STATUS_IDLE = "Idle";
     public static final String STATUS_READING = "Reading";
@@ -60,11 +62,19 @@ public class FileSenderListener extends BaseObservable {
 
     private FileSenderListener(){
         this.setStatus(STATUS_IDLE);
+        this.bounds = null;
         this.gcodeFileName = " " + GrblUtils.implode(" | ", Constants.SUPPORTED_FILE_TYPES);
         //this.gcodeFile = null;
         this.gcodeUri = null;
         this.rowsInFile = 0;
         this.rowsSent = 0;
+    }
+
+    @Bindable
+    public Bounds getBounds() { return this.bounds; }
+    public void setBounds(Bounds bounds) {
+        this.bounds = bounds;
+        notifyPropertyChanged(BR.bounds);
     }
 
     @Bindable

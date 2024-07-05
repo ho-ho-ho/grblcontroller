@@ -66,6 +66,7 @@ import in.co.gorest.grblcontroller.model.GcodeCommand;
 import in.co.gorest.grblcontroller.model.Overrides;
 import in.co.gorest.grblcontroller.service.FileStreamerIntentService;
 import in.co.gorest.grblcontroller.util.GrblUtils;
+import in.co.gorest.grblcontroller.util.SimpleGcodeParser;
 
 public class FileSenderTabFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener{
 
@@ -235,16 +236,10 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
 
         if(requestCode == Constants.FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
             Uri uri = data.getData();
-            //try {
-                //InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
-
-                fileSender.setGcodeUri(uri);
-                fileSender.setElapsedTime("00:00:00");
-                new ReadFileAsyncTask().execute(uri);
-                sharedPref.edit().putString(getString(R.string.most_recent_selected_file), "stream").apply();
-            /*} catch (FileNotFoundException e) {
-                EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_file_not_found), true, true));
-            }*/
+            fileSender.setGcodeUri(uri);
+            fileSender.setElapsedTime("00:00:00");
+            new ReadFileAsyncTask().execute(uri);
+            sharedPref.edit().putString(getString(R.string.most_recent_selected_file), "stream").apply();
         }
 
     }
@@ -320,6 +315,8 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
 
     private static class ReadFileAsyncTask extends AsyncTask<Uri, Integer, Integer> {
 
+        private SimpleGcodeParser simpleParser = new SimpleGcodeParser();;
+
         protected void onPreExecute(){
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_READING);
             this.initFileSenderListener();
@@ -344,6 +341,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
                             cancel(true);
                         }
                     }
+                    simpleParser.parseLine(sCurrentLine);
                     if(lines%2500 == 0) publishProgress(lines);
                 }
                 reader.close();
@@ -363,11 +361,13 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         public void onPostExecute(Integer lines){
             FileSenderListener.getInstance().setRowsInFile(lines);
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_IDLE);
+            FileSenderListener.getInstance().setBounds(simpleParser.getBounds());
         }
 
         private void initFileSenderListener(){
             FileSenderListener.getInstance().setRowsInFile(0);
             FileSenderListener.getInstance().setRowsSent(0);
+            FileSenderListener.getInstance().setBounds(null);
         }
     }
 

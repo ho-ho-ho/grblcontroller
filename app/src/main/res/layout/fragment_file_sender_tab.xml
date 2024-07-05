@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <import type="android.view.View"/>
         <variable name="machineStatus" type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
         <variable name="fileSender" type="in.co.gorest.grblcontroller.listeners.FileSenderListener" />
     </data>
@@ -31,7 +32,6 @@
                     android:layout_height="wrap_content" />
 
                 <com.joanzapata.iconify.widget.IconTextView
-                    android:enabled="@{(machineStatus.state.equals(machineStatus.STATE_IDLE) || machineStatus.state.equals(machineStatus.STATE_CHECK)) &amp;&amp; fileSender.status.equals(fileSender.STATUS_IDLE)}"
                     android:text="{fa-folder-open 24dp}"
                     android:id="@+id/select_gcode_file"
                     android:layout_alignParentEnd="true"
@@ -264,6 +264,63 @@
                         tools:ignore="SpeakableTextPresentCheck" />
                 </TableRow>
 
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{fileSender.bounds != null ? View.VISIBLE : View.GONE}">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Axis" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:text="Min" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:text="Max" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView android:text="X" />
+                    <TextView
+                        android:text="@{String.valueOf(fileSender.bounds.XMin)}"
+                        android:paddingLeft="8dp" />
+                    <TextView
+                        android:text="@{String.valueOf(fileSender.bounds.XMax)}"
+                        android:paddingLeft="8dp" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView android:text="Y" />
+                    <TextView
+                        android:text="@{String.valueOf(fileSender.bounds.YMin)}"
+                        android:paddingLeft="8dp" />
+                    <TextView
+                        android:text="@{String.valueOf(fileSender.bounds.YMax)}"
+                        android:paddingLeft="8dp" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView android:text="Z" />
+                    <TextView
+                        android:text="@{String.valueOf(fileSender.bounds.ZMin)}"
+                        android:paddingLeft="8dp" />
+                    <TextView
+                        android:text="@{String.valueOf(fileSender.bounds.ZMax)}"
+                        android:paddingLeft="8dp" />
+                </TableRow>
             </TableLayout>
 
         </LinearLayout>
