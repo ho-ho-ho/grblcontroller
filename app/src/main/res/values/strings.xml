@@ -39,6 +39,11 @@
     <string name="preference_last_connected_device" translatable="false">last_connected_device</string>
     <string name="preference_sleep_after_job" translatable="false">sleep_after_job</string>
     <string name="preference_probing_feed_rate" translatable="false">preference_probing_feed_rate</string>
+    <string name="preference_probing_tool_diameter" translatable="false">probing_tool_diameter</string>
+    <string name="preference_probing_touch_plate_x_offset" translatable="false">probing_touch_plate_x_offset</string>
+    <string name="preference_probing_touch_plate_y_offset" translatable="false">probing_touch_plate_y_offset</string>
+    <string name="preference_probing_touch_distance_xy" translatable="false">probing_touch_distance_xy</string>
+    <string name="preference_probing_touch_depth_xy" translatable="false">probing_touch_depth_xy</string>
     <string name="preference_probing_plate_thickness" translatable="false">probing_plate_thickness</string>
     <string name="preference_probing_distance" translatable="false">probing_distance</string>
     <string name="preference_keep_screen_on" translatable="false">preference_keep_screen_on</string>
@@ -268,12 +273,46 @@
 
 
     <!-- Probing Tab -->
+    <string name="text_probing_type_straight">Straight</string>
+    <string name="text_probing_type_straight_title">Straight probe</string>
+    <string name="text_probing_type_tlo">TLO</string>
+    <string name="text_probing_type_center">Center</string>
+
+    <string name="text_probing_x_location">X probing location</string>
+    <string name="text_probing_x_location_left">left</string>
+    <string name="text_probing_x_location_none">none</string>
+    <string name="text_probing_x_location_right">right</string>
+    <string name="text_probing_y_location">Y probing location</string>
+    <string name="text_probing_y_location_back">back</string>
+    <string name="text_probing_y_location_none">none</string>
+    <string name="text_probing_y_location_front">front</string>
+    <string name="text_probing_probe_z">Probe Z</string>
+
+    <string name="text_probing_auto_zero_z">Auto adjust Z axis</string>
+    <string name="text_probing_start">Probe</string>
+
+
     <string name="text_probing_help">1. Do probing with first tool.  2. Change the tool.  3. Probe again with \"Probe + TLO\".</string>
     <string name="text_probing_feed_rate">Feed rate</string>
+    <string name="text_probing_tool_diameter">Tool Diameter</string>
+    <string name="text_probing_touch_plate_x_offset">Touch Plate X Offset</string>
+    <string name="text_probing_touch_plate_y_offset">Touch Plate Y Offset</string>
+    <string name="text_probing_touch_distance_xy">Touch XY Travel Distance</string>
+    <string name="text_probing_touch_depth_xy">Touch XY Depth</string>
+    <string name="text_probing_touch_plate_thickness">Touch plate thickness</string>
+
+    <string name="text_probing_tlo_probe_reference">probe reference</string>
+    <string name="text_probing_tlo_probe_reference_desc">Probes the current tool. Does not change WCS or TLO. Do this with the first tool before changing.</string>
+    <string name="text_probing_tlo_probe_reference_success">Probe reference set successfully.</string>
+    <string name="text_probing_center">Probe center</string>
+    <string name="text_probing_center_probe_from">Probe from</string>
+    <string name="text_probing_center_inside">Inside</string>
+    <string name="text_probing_center_outside">Outside</string>
+    <string name="text_probing_center_apply">Apply</string>
+    <string name="text_touch_plate_thickness_desc">Touch plate thickness</string>
     <string name="text_touch_plate_thickness">Plate thickness</string>
     <string name="text_distance_to_probe">Distance to probe</string>
-    <string name="text_auto_zero_z_axis_after_probe">Auto adjust Z axis</string>
-    <string name="text_start_probe">Probe</string>
+
     <string name="text_straight_probe">G38.3: Straight Probe</string>
     <string name="text_straight_probe_desc">Probe toward workpiece, stop on contact.   Ensure your probe setup is correct and click Yes to start probing</string>
     <string name="text_last_probe_location_unknown">Last probe location is unknown</string>
@@ -290,7 +329,8 @@
     <string name="text_probing_tab_heading">Probing | Tool length offset {fa-info-circle 16dp @color/colorAccent}</string>
     <string name="text_last_probe_position">Last probe position</string>
     <string name="text_current_tlo">Current TLO</string>
-    <string name="probe_plus_tlo">Probe {fa-plus 14dp} TLO</string>
+    <string name="probe_plus_tlo">probe and set TLO</string>
+    <string name="text_probe_cancel_tlo">cancel TLO</string>
 
     <!-- Jogging Tab -->
 
@@ -414,6 +454,10 @@
     <string name="text_cam_help">"creare un percorso "</string>
     <string name="preference_cam_tool_dia">10</string>
     <string name="text_cam_tool_dia">tool diameter</string>
+    <string name="text_probing_preferences">Probing preferences</string>
+    <string name="axis_x">X Axis</string>
+    <string name="axis_y">Y Axis</string>
+    <string name="axis_z">Z Axis</string>
 
     <string-array name="job_type_list">
         <item>rectangle facing feeding X</item>

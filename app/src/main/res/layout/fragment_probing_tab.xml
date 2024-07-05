@@ -1,250 +1,32 @@
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <variable name="machineStatus" type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
+
+        <variable
+            name="machineStatus"
+            type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
     </data>
 
-    <ScrollView
-        android:paddingTop="4dp"
-        android:fillViewport="true"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/probing_tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="36dp" />
 
-            <RelativeLayout
-                android:id="@+id/probing_help"
+        <in.co.gorest.grblcontroller.ui.NestedScrollableHost
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/probing_tab_layout"
+            android:paddingTop="4dp">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/probing_pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:minHeight="48dp"
-                android:padding="4dp"
-                tools:targetApi="m"
-                tools:ignore="UnusedAttribute">
-
-                <com.joanzapata.iconify.widget.IconTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:text="@string/text_probing_tab_heading"
-                    tools:ignore="RelativeOverlap" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="G38.3 | G43.1"
-                    tools:ignore="HardcodedText" />
-
-            </RelativeLayout>
-
-            <View android:layout_margin="4dp" android:layout_height="0.2dp" android:background="@color/colorDivider" android:layout_width="fill_parent"/>
-
-            <RelativeLayout
-                android:id="@+id/probing_feed_rate_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:minHeight="48dp"
-                android:padding="4dp"
-                tools:targetApi="m"
-                tools:ignore="UnusedAttribute">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@+id/probing_feed_rate"
-                    android:text="@string/text_probing_feed_rate" />
-
-                <com.joanzapata.iconify.widget.IconTextView
-                    android:id="@+id/probing_feed_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="10"
-                    tools:ignore="HardcodedText" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/probing_plate_thickness_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:minHeight="48dp"
-                android:padding="4dp"
-                tools:targetApi="m"
-                tools:ignore="UnusedAttribute">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@+id/probing_plate_thickness"
-                    android:text="@string/text_touch_plate_thickness" />
-
-                <com.joanzapata.iconify.widget.IconTextView
-                    android:id="@+id/probing_plate_thickness"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="2.0"
-                    tools:ignore="HardcodedText" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/probing_distance_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:minHeight="48dp"
-                android:padding="4dp"
-                tools:targetApi="m"
-                tools:ignore="UnusedAttribute">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@+id/probing_distance"
-                    android:text="@string/text_distance_to_probe" />
-
-                <com.joanzapata.iconify.widget.IconTextView
-                    android:id="@+id/probing_distance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="5"
-                    tools:ignore="HardcodedText" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/last_probe_position_view"
-                android:padding="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_toStartOf="@+id/last_probe_position"
-                    android:text="@string/text_last_probe_position"
-                    android:layout_alignParentStart="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:text='@{(machineStatus.lastProbePosition != null) ? machineStatus.lastProbePosition.cordZ.toString() : @string/text_unknown}'
-                    android:id="@+id/last_probe_position"
-                    android:layout_alignParentEnd="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:padding="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_toStartOf="@+id/current_tlo"
-                    android:text="@string/text_current_tlo"
-                    android:layout_alignParentStart="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:text='@{machineStatus.toolLengthOffset.toString()}'
-                    android:id="@+id/current_tlo"
-                    android:layout_alignParentEnd="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:padding="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_toStartOf="@+id/auto_zero_after_probe"
-                    android:text="@string/text_auto_zero_z_axis_after_probe"
-                    android:layout_alignParentStart="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/auto_zero_after_probe"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    tools:ignore="TouchTargetSizeCheck" />
-
-            </RelativeLayout>
-
-            <View android:layout_margin="4dp" android:layout_height="0.2dp" android:background="@color/colorDivider" android:layout_width="fill_parent"/>
-
-            <TableLayout
-                android:layout_centerHorizontal="true"
-                android:stretchColumns="*"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="ObsoleteLayoutParam">
-
-                <TableRow tools:ignore="UselessParent">
-
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
-                        android:layout_weight="0.33"
-                        android:id="@+id/start_probe"
-                        android:text="@string/text_start_probe"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE) &amp;&amp; (machineStatus.lastProbePosition != null)}"
-                        android:layout_weight="0.33"
-                        android:id="@+id/start_tool_length_offset"
-                        android:text="@string/probe_plus_tlo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
-                        android:layout_weight="0.33"
-                        android:id="@+id/cancel_tool_offset"
-                        android:text="TLO {fa-times 16dp}"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
-
-                </TableRow>
-
-            </TableLayout>
-
-        </LinearLayout>
-
-    </ScrollView>
-
+                android:layout_height="fill_parent" />
+        </in.co.gorest.grblcontroller.ui.NestedScrollableHost>
+    </RelativeLayout>
 </layout>

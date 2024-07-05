@@ -1,0 +1,128 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="androidx.databinding.ObservableDouble" />
+
+        <variable
+            name="machineStatus"
+            type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
+
+        <variable
+            name="referenceZ"
+            type="ObservableDouble" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:padding="4dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_dynamic_tool_length_offset" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/probe_center_reference_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:padding="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/probe_center_reference_z"
+                android:text="@string/text_probing_tlo_probe_reference" />
+
+            <TextView
+                android:id="@+id/probe_center_reference_z"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@{referenceZ != Double.MAX_VALUE ? Double.toString(referenceZ) : @string/text_unknown}" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/last_probe_position_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:padding="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/last_probe_position"
+                android:text="@string/text_last_probe_position" />
+
+            <TextView
+                android:id="@+id/last_probe_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text='@{(machineStatus.lastProbePosition != null) ? machineStatus.lastProbePosition.cordZ.toString() : @string/text_unknown}' />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:padding="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/current_tlo"
+                android:text="@string/text_current_tlo" />
+
+            <TextView
+                android:id="@+id/current_tlo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text='@{machineStatus.toolLengthOffset.toString()}' />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/start_tlo_reference"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_weight="0.33"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="@string/text_probing_tlo_probe_reference" />
+
+            <Button
+                android:id="@+id/start_tool_length_offset"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_weight="0.33"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE) &amp;&amp; referenceZ != Double.MAX_VALUE}"
+                android:text="@string/probe_plus_tlo" />
+
+            <Button
+                android:id="@+id/cancel_tool_offset"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_weight="0.33"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="@string/text_probe_cancel_tlo" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>
