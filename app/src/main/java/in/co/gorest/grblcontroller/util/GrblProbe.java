@@ -297,7 +297,7 @@ public class GrblProbe {
 
     private void probeZAxis(Pair<Axis, Direction> axisDir) {
         grblHandler.onGcodeCommandReceived("G91");
-        grblHandler.onGcodeCommandReceived("G38.3Z" + getSettingProbingDepthXY() + "F" + getSettingProbingFeedRate());
+        grblHandler.onGcodeCommandReceived("G38.3Z-" + getSettingProbingDepthXY() + "F" + getSettingProbingFeedRate());
     }
 
     private void onProbeZAxis(Pair<Axis, Direction> axisDir, double probedPosition) {
