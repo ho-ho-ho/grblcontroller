@@ -8,14 +8,26 @@ import in.co.gorest.grblcontroller.model.Bounds;
 // very rudimentary gcode parser, for now only keeps track of motion and distance modals.
 // used to find the min/max values of each axis of a given gcode file
 public class SimpleGcodeParser {
+    public interface GcodeParserListener {
+        void move(double x, double y, double z);
+        void rapidMove(double x, double y, double z);
+    }
+
+    private GcodeParserListener listener;
+
     private int motionMode = -1; // G0, G1, G2, G3, G38.2, G38.3, G38.4, G38.5, G80
     private int distanceMode = -1; // G90, G91
     private Pattern wordPattern = Pattern.compile("([A-Z])(-?[0-9.]+)");
 
     private Bounds bounds;
 
-    public SimpleGcodeParser() {
+    private double lastX = 0.0;
+    private double lastY = 0.0;
+    private double lastZ = 0.0;
+
+    public SimpleGcodeParser(GcodeParserListener gcodeParserListener) {
         bounds = new Bounds();
+        listener = gcodeParserListener;
     }
 
     public Bounds getBounds() {
@@ -52,8 +64,8 @@ public class SimpleGcodeParser {
             } else if (word.equals("Z")) {
                 z = Double.parseDouble(address);
             } else if (word.equals("G")) {
-                if (address.equals("53")) {
-                    // move in MCS, doesn't bother us here
+                if (address.equals("53") || (address.equals("28"))) {
+                    // doesn't bother us here
                     return;
                 }
 
@@ -80,15 +92,26 @@ public class SimpleGcodeParser {
             }
         }
 
+        if (x == null && y == null && z == null && g == null) {
+            // no movement on this line
+            return;
+        }
+
+        if (x != null) { lastX = x; }
+        if (y != null) { lastY = y; }
+        if (z != null) { lastZ = z; }
+
         if (g == null) {
-            calculateMinMax(x, y, z);
+            bounds.include(x, y, z);
         } else if ((g >= 0) && (g <= 4)) {
             motionMode = g;
-            calculateMinMax(x, y, z);
+            bounds.include(x, y, z);
         }
-    }
 
-    private void calculateMinMax(Double x, Double y, Double z) {
-        bounds.include(x, y, z);
+        if (motionMode == 0) {
+            listener.rapidMove(lastX, lastY, lastZ);
+        } else {
+            listener.move(lastX, lastY, lastZ);
+        }
     }
 }

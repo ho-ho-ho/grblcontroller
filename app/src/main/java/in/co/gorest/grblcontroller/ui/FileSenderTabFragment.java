@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,6 +77,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
     private MachineStatusListener machineStatus;
     private FileSenderListener fileSender;
     private EnhancedSharedPreferences sharedPref;
+    private GLSurfaceView visualizerView;
 
     public FileSenderTabFragment() {}
 
@@ -110,6 +112,11 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         binding.setMachineStatus(machineStatus);
         binding.setFileSender(fileSender);
         View view = binding.getRoot();
+
+        visualizerView = view.findViewById(R.id.file_sender_visualizer);
+        visualizerView.setEGLContextClientVersion(3);
+        visualizerView.setRenderer(GCodeVisualizerRenderer.getInstance());
+        visualizerView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         IconTextView selectGcodeFile = view.findViewById(R.id.select_gcode_file);
         selectGcodeFile.setOnClickListener(view14 -> {
@@ -245,7 +252,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
             fileSender.setGcodeUri(uri);
             fileSender.setGcodeFileName(cursor.getString(idx));
             fileSender.setElapsedTime("00:00:00");
-            new ReadFileAsyncTask().execute(uri);
+            new ReadFileAsyncTask(visualizerView).execute(uri);
             sharedPref.edit().putString(getString(R.string.most_recent_selected_file), "stream").apply();
         }
 
@@ -320,7 +327,12 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
 
     private static class ReadFileAsyncTask extends AsyncTask<Uri, Integer, Integer> {
 
-        private SimpleGcodeParser simpleParser = new SimpleGcodeParser();;
+        private SimpleGcodeParser simpleParser = new SimpleGcodeParser(GCodeVisualizerRenderer.getInstance());
+        private GLSurfaceView visualizerView;
+
+        public ReadFileAsyncTask(GLSurfaceView view) {
+            visualizerView = view;
+        }
 
         protected void onPreExecute(){
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_READING);
@@ -367,12 +379,15 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
             FileSenderListener.getInstance().setRowsInFile(lines);
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_IDLE);
             FileSenderListener.getInstance().setBounds(simpleParser.getBounds());
+            GCodeVisualizerRenderer.getInstance().setBounds(simpleParser.getBounds());
+            visualizerView.requestRender();
         }
 
         private void initFileSenderListener(){
             FileSenderListener.getInstance().setRowsInFile(0);
             FileSenderListener.getInstance().setRowsSent(0);
             FileSenderListener.getInstance().setBounds(null);
+            GCodeVisualizerRenderer.getInstance().resetVertices();
         }
     }
 
