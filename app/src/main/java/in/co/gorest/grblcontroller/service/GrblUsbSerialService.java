@@ -134,10 +134,7 @@ public class GrblUsbSerialService extends Service {
         setFilter();
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         findSerialPortDevice();
-
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
-            startForeground(Constants.USB_OTG_SERVICE_NOTIFICATION_ID, this.getNotification(null));
-        }
+        startForeground(Constants.USB_OTG_SERVICE_NOTIFICATION_ID, this.getNotification(null));
 
         serialUsbCommunicationHandler = new SerialUsbCommunicationHandler(this);
         EventBus.getDefault().register(this);
@@ -331,7 +328,11 @@ public class GrblUsbSerialService extends Service {
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(ACTION_USB_DETACHED);
         filter.addAction(ACTION_USB_ATTACHED);
-        registerReceiver(usbReceiver, filter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(usbReceiver, filter);
+        }
     }
 
     /*

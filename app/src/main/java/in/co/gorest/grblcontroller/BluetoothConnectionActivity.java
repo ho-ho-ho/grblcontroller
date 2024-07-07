@@ -188,56 +188,55 @@ public class BluetoothConnectionActivity extends GrblActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
-            case R.id.action_connect:
-                if(bluetoothAdapter.isEnabled()){
+        if (id == R.id.action_connect) {
+            if (bluetoothAdapter.isEnabled()) {
 
-                    if(grblBluetoothSerialService != null){
-                        if(grblBluetoothSerialService.getState() == GrblBluetoothSerialService.STATE_CONNECTED){
-                            new AlertDialog.Builder(this)
-                                    .setTitle(R.string.text_disconnect)
-                                    .setMessage(getString(R.string.text_disconnect_confirm))
-                                    .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> {
-                                        onGcodeCommandReceived("$10=1");
-                                        if(grblBluetoothSerialService != null) grblBluetoothSerialService.disconnectService();
-                                    })
-                                    .setNegativeButton(getString(R.string.text_cancel), null)
-                                    .show();
+                if (grblBluetoothSerialService != null) {
+                    if (grblBluetoothSerialService.getState() == GrblBluetoothSerialService.STATE_CONNECTED) {
+                        new AlertDialog.Builder(this)
+                                .setTitle(R.string.text_disconnect)
+                                .setMessage(getString(R.string.text_disconnect_confirm))
+                                .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> {
+                                    onGcodeCommandReceived("$10=1");
+                                    if (grblBluetoothSerialService != null)
+                                        grblBluetoothSerialService.disconnectService();
+                                })
+                                .setNegativeButton(getString(R.string.text_cancel), null)
+                                .show();
 
-                        }else{
-                            Intent serverIntent = new Intent(this, DeviceListActivity.class);
-                            startActivityForResult(serverIntent, Constants.CONNECT_DEVICE_INSECURE);
-                        }
-                    }else{
-                        EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_bt_service_not_running), true, true));
+                    } else {
+                        Intent serverIntent = new Intent(this, DeviceListActivity.class);
+                        startActivityForResult(serverIntent, Constants.CONNECT_DEVICE_INSECURE);
                     }
-
-                }else{
-                    showToastMessage(getString(R.string.text_bt_not_enabled));
+                } else {
+                    EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_bt_service_not_running), true, true));
                 }
-                return true;
 
-            case R.id.action_grbl_reset:
-                boolean resetConfirm = sharedPref.getBoolean(getString(R.string.preference_confirm_grbl_soft_reset), true);
-                if(resetConfirm){
-                    new AlertDialog.Builder(this)
-                            .setTitle(R.string.text_grbl_soft_reset)
-                            .setMessage(R.string.text_grbl_soft_reset_desc)
-                            .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> {
-                                if(FileStreamerIntentService.getIsServiceRunning()){
-                                    FileStreamerIntentService.setShouldContinue(false);
-                                    Intent intent = new Intent(getApplicationContext(), FileStreamerIntentService.class);
-                                    stopService(intent);
-                                }
-                                onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
-                            })
-                            .setNegativeButton(getString(R.string.text_cancel), null)
-                            .show();
+            } else {
+                showToastMessage(getString(R.string.text_bt_not_enabled));
+            }
+            return true;
+        } else if (id == R.id.action_grbl_reset) {
+            boolean resetConfirm = sharedPref.getBoolean(getString(R.string.preference_confirm_grbl_soft_reset), true);
+            if(resetConfirm){
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.text_grbl_soft_reset)
+                        .setMessage(R.string.text_grbl_soft_reset_desc)
+                        .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> {
+                            if(FileStreamerIntentService.getIsServiceRunning()){
+                                FileStreamerIntentService.setShouldContinue(false);
+                                Intent intent = new Intent(getApplicationContext(), FileStreamerIntentService.class);
+                                stopService(intent);
+                            }
+                            onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
+                        })
+                        .setNegativeButton(getString(R.string.text_cancel), null)
+                        .show();
 
-                }else{
-                    onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
-                }
-                return true;
+            }else{
+                onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
+            }
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

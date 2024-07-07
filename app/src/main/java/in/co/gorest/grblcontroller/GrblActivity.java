@@ -173,34 +173,29 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
-            case R.id.app_settings:
-                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-                return true;
+        if (id == R.id.app_settings) {
+            startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+            return true;
+        } else if (id == R.id.app_notifications) {
+            startActivity(new Intent(getApplicationContext(), NotificationArchiveActivity.class));
+            return true;
+        } else if (id == R.id.app_about) {
+            startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+            return true;
+        } else if (id == R.id.share) {
+            try {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBodyText = "Grbl Controller. Very cool CNC controller for grbl firmware https://goo.gl/aVnvp4";
 
-            case  R.id.app_notifications:
-                startActivity(new Intent(getApplicationContext(), NotificationArchiveActivity.class));
-                return true;
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Grbl Controller");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
+                startActivity(Intent.createChooser(sharingIntent, "Sharing Option"));
+            }catch (ActivityNotFoundException e){
+                showToastMessage("No application available to perform this action!", true, true);
+            }
 
-            case R.id.app_about:
-                startActivity(new Intent(getApplicationContext(), AboutActivity.class));
-                return true;
-
-            case R.id.share:
-                try {
-                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                    sharingIntent.setType("text/plain");
-                    String shareBodyText = "Grbl Controller. Very cool CNC controller for grbl firmware https://goo.gl/aVnvp4";
-
-                    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Grbl Controller");
-                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
-                    startActivity(Intent.createChooser(sharingIntent, "Sharing Option"));
-                }catch (ActivityNotFoundException e){
-                    showToastMessage("No application available to perform this action!", true, true);
-                }
-
-                return true;
-
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

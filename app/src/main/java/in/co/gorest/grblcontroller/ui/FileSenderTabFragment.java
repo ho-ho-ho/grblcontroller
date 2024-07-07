@@ -255,20 +255,18 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
     @Override
     public boolean onLongClick(View view){
         int id = view.getId();
-        switch(id){
-            case R.id.feed_override_coarse_minus:
-            case R.id.feed_override_coarse_plus:
-            case R.id.feed_override_fine_minus:
-            case R.id.feed_override_fine_plus:
-                sendRealTimeCommand(Overrides.CMD_FEED_OVR_RESET);
-                return true;
-
-            case R.id.spindle_override_coarse_minus:
-            case R.id.spindle_override_coarse_plus:
-            case R.id.spindle_override_fine_minus:
-            case R.id.spindle_override_fine_plus:
-                sendRealTimeCommand(Overrides.CMD_SPINDLE_OVR_RESET);
-                return true;
+        if (id == R.id.feed_override_coarse_minus
+                || id == R.id.feed_override_coarse_plus
+                || id == R.id.feed_override_fine_minus
+                || id == R.id.feed_override_fine_plus) {
+            sendRealTimeCommand(Overrides.CMD_FEED_OVR_RESET);
+            return true;
+        } else if (id == R.id.spindle_override_coarse_minus
+            || id == R.id.spindle_override_coarse_plus
+            || id == R.id.spindle_override_fine_minus
+            || id == R.id.spindle_override_fine_plus) {
+            sendRealTimeCommand(Overrides.CMD_SPINDLE_OVR_RESET);
+            return true;
         }
 
         return false;
