@@ -23,6 +23,7 @@ package in.co.gorest.grblcontroller.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,9 +35,13 @@ import android.widget.RelativeLayout;
 import android.widget.TableRow;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.Observable;
+import androidx.databinding.library.baseAdapters.BR;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.joanzapata.iconify.widget.IconButton;
 import com.joanzapata.iconify.widget.IconToggleButton;
 import com.warkiz.widget.IndicatorSeekBar;
@@ -65,7 +70,7 @@ import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
 import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.util.GrblUtils;
 
-public class JoggingTabFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener{
+public class JoggingTabFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = JoggingTabFragment.class.getSimpleName();
     private MachineStatusListener machineStatus;
@@ -73,6 +78,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
     private BlockingQueue<Integer> completedCommands;
     private CustomCommandsAsyncTask customCommandsAsyncTask;
     private String pointsCoords;
+    MaterialButtonToggleGroup stepSelector;
 
     public JoggingTabFragment() {}
 
@@ -85,6 +91,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
         super.onCreate(savedInstanceState);
         machineStatus = MachineStatusListener.getInstance();
         sharedPref = EnhancedSharedPreferences.getInstance(requireActivity().getApplicationContext(), getString(R.string.shared_preference_key));
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().register(this);
     }
 
@@ -106,7 +113,35 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
     @Override
     public void onDestroy(){
         super.onDestroy();
+        sharedPref.unregisterOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().unregister(this);
+    }
+
+    private void updateSteps() {
+        double stepXY = machineStatus.getJogging().stepXY;
+        double stepZ = machineStatus.getJogging().stepZ;
+
+        if (stepXY == Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_xy_step_small), "0")) &&
+                stepZ == Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_z_step_small), "0"))) {
+            stepSelector.check(R.id.jog_step_small_button);
+        } else if (stepXY == Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_xy_step_medium), "0")) &&
+                stepZ == Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_z_step_medium), "0"))) {
+            stepSelector.check(R.id.jog_step_medium_button);
+        } else if (stepXY == Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_xy_step_high), "0")) &&
+                stepZ == Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_z_step_high), "0"))) {
+            stepSelector.check(R.id.jog_step_high_button);
+        } else {
+            stepSelector.clearChecked();
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
+        if (key.equals(getString(R.string.preference_jog_xy_step_small)) || key.equals(getString(R.string.preference_jog_z_step_small)) ||
+                key.equals(getString(R.string.preference_jog_xy_step_medium)) || key.equals(getString(R.string.preference_jog_z_step_medium)) ||
+                key.equals(getString(R.string.preference_jog_xy_step_high)) || key.equals(getString(R.string.preference_jog_z_step_high))) {
+            updateSteps();
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -115,6 +150,31 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
         FragmentJoggingTabBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_jogging_tab, container, false);
         binding.setMachineStatus(machineStatus);
         View view = binding.getRoot();
+
+        stepSelector = view.findViewById(R.id.jog_step_selector);
+        updateSteps();
+        stepSelector.addOnButtonCheckedListener((group, checkedId, checked) -> {
+            if (!checked) {
+                return;
+            }
+
+            if (checkedId == R.id.jog_step_small_button) {
+                machineStatus.setJogging(
+                        Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_xy_step_small), "0")),
+                        Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_z_step_small), "0"))
+                );
+            } else if (checkedId == R.id.jog_step_medium_button) {
+                machineStatus.setJogging(
+                        Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_xy_step_medium), "0")),
+                        Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_z_step_medium), "0"))
+                );
+            } else if (checkedId == R.id.jog_step_high_button) {
+                machineStatus.setJogging(
+                        Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_xy_step_high), "0")),
+                        Double.parseDouble(sharedPref.getString(getString(R.string.preference_jog_z_step_high), "0"))
+                );
+            }
+        });
 
         RelativeLayout joggingStepFeedView = view.findViewById(R.id.jogging_step_feed_view);
         joggingStepFeedView.setOnClickListener(this);
@@ -533,6 +593,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                         EventBus.getDefault().post(new UiToastEvent("XY Axis step value is set to " + step_value));
                         EnhancedSharedPreferences.Editor editor = sharedPref.edit();
                         editor.putDouble(getString(R.string.preference_jogging_step_size), Double.parseDouble(Float.toString(step_value))).commit();
+                        updateSteps();
                     }else{
                         EventBus.getDefault().post(new UiToastEvent("Invalid step size value, please check settings", true, true));
                     }

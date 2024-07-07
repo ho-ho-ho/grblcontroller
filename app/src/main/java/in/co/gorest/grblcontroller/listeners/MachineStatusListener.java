@@ -223,7 +223,11 @@ public class MachineStatusListener extends BaseObservable {
             notifyPropertyChanged(BR.jogging);
         }
     }
-
+    public void setJogging(double stepXY, double stepZ) {
+        if (stepXY != this.jogging.stepXY || stepZ != this.jogging.stepZ) {
+            this.setJogging(stepXY, stepZ, this.jogging.feed, this.jogging.inches);
+        }
+    }
 
     @Bindable
     public OverridePercents getOverridePercents(){ return this.overridePercents; }
