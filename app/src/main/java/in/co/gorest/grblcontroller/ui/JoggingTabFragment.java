@@ -52,9 +52,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -77,7 +74,6 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
     private EnhancedSharedPreferences sharedPref;
     private BlockingQueue<Integer> completedCommands;
     private CustomCommandsAsyncTask customCommandsAsyncTask;
-    private String pointsCoords;
     MaterialButtonToggleGroup stepSelector;
 
     public JoggingTabFragment() {}
@@ -299,29 +295,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                 customCommandsAsyncTask.cancel(true);
                 fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
             }
-        } else if (id == R.id.custom_button_1) {
-            pointsCoords += String.valueOf(machineStatus.getWorkPosition().getCordX()) + ',' +
-                    String.valueOf(machineStatus.getWorkPosition().getCordY()) + ',' +
-                    String.valueOf(machineStatus.getWorkPosition().getCordZ()) + "\n";
-
-            //System.out.println(pointsCoords);
-
-            File pointsFile;
-
-            pointsFile = new File(getActivity().getExternalFilesDir(null), "points.txt");
-
-            try {
-                FileOutputStream fos = new FileOutputStream(pointsFile);
-                fos.write(pointsCoords.getBytes());
-                fos.flush();
-                fos.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            EventBus.getDefault().post(new UiToastEvent("new points file at " + getActivity().getExternalFilesDir(null), true, true));
-        } else if(id == R.id.custom_button_2 || id == R.id.custom_button_3 ||id == R.id.custom_button_4) {
+        } else if(id == R.id.custom_button_1 || id == R.id.custom_button_2 || id == R.id.custom_button_3 ||id == R.id.custom_button_4) {
             customButton(id, false);
         }
     }

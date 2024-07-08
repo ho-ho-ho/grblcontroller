@@ -77,13 +77,4 @@ public interface Constants {
 
     String TEXT_CATEGORY_UPDATE                     = "update";
     String TEXT_CATEGORY_LINK                       = "link";
-
-    String CAM_FEED_RATE = "1000.0" ;
-    String CAM_TRAVERSAL = "5.0" ;
-    String CAM_STEP_OVER = "5.0" ;
-    String CAM_GCODE_HEAD = "G17\nG90\nG21\nM7\nM8\nG21\n";
-    String CAM_GCODE_END = "M9\nM30\n";
-    String CAM_ZDEEP = "0.0";
-    String CAM_ZSTEP = "0.0";
-    String CAM_TOOL_DIA ="10.0" ;
 }
