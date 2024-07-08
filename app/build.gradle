@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "in.co.gorest.grblcontroller"
         minSdkVersion 24
-        targetSdkVersion 34
+        targetSdkVersion 33
         versionCode 38
         versionName "2.57"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

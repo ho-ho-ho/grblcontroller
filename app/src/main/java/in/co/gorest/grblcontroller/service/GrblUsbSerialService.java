@@ -111,6 +111,7 @@ public class GrblUsbSerialService extends Service {
     private UsbDevice device;
     private UsbDeviceConnection connection;
     private UsbSerialDevice serialPort;
+    private PendingIntent mPendingIntent;
 
     private boolean serialPortConnected;
     public static volatile boolean isGrblFound = false;
@@ -328,7 +329,7 @@ public class GrblUsbSerialService extends Service {
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(ACTION_USB_DETACHED);
         filter.addAction(ACTION_USB_ATTACHED);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED);
         } else {
             registerReceiver(usbReceiver, filter);
@@ -340,12 +341,14 @@ public class GrblUsbSerialService extends Service {
      */
     private void requestUserPermission() {
         int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            pendingFlags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            pendingFlags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingFlags = PendingIntent.FLAG_MUTABLE;
         } else {
             pendingFlags = 0;
         }
-        PendingIntent mPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), pendingFlags);
+        mPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), pendingFlags);
         usbManager.requestPermission(device, mPendingIntent);
     }
 

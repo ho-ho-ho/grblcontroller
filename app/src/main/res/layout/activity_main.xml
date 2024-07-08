@@ -60,7 +60,7 @@
 
                             <TextView
                                 android:text="@{machineStatus.state}"
-                                android:textColor="@{machineStatus.state.equalsIgnoreCase(machineStatus.STATE_ALARM) ? @color/colorPrimary : @android:color/tertiary_text_dark}" />
+                                android:textColor="@{machineStatus.state.equalsIgnoreCase(machineStatus.STATE_ALARM) ? @color/colorPrimary : @android:color/secondary_text_dark}" />
 
                             <TextView android:text="MPos"
                                 tools:ignore="HardcodedText" />
@@ -86,7 +86,7 @@
 
                             <TextView
                                 android:text="X"
-                                android:textColor="@{machineStatus.enabledPins.x ? @color/colorPrimary : @android:color/tertiary_text_dark}"
+                                android:textColor="@{machineStatus.enabledPins.x ? @color/colorPrimary : @android:color/secondary_text_dark}"
                                 tools:ignore="HardcodedText" />
 
                             <TextView android:text='@{String.format("%.3f", machineStatus.machinePosition.cordX)}' />
@@ -112,7 +112,7 @@
 
                             <TextView
                                 android:text="Y"
-                                android:textColor="@{machineStatus.enabledPins.y ? @color/colorPrimary : @android:color/tertiary_text_dark}"
+                                android:textColor="@{machineStatus.enabledPins.y ? @color/colorPrimary : @android:color/secondary_text_dark}"
                                 tools:ignore="HardcodedText" />
 
                             <TextView android:text='@{String.format("%.3f", machineStatus.machinePosition.cordY)}' />
@@ -138,7 +138,7 @@
 
                             <TextView
                                 android:text="Z"
-                                android:textColor="@{machineStatus.enabledPins.z ? @color/colorPrimary : @android:color/tertiary_text_dark}"
+                                android:textColor="@{machineStatus.enabledPins.z ? @color/colorPrimary : @android:color/secondary_text_dark}"
                                 tools:ignore="HardcodedText" />
 
                             <TextView android:text='@{String.format("%.3f", machineStatus.machinePosition.cordZ)}' />
@@ -146,7 +146,7 @@
                             <com.joanzapata.iconify.widget.IconTextView
                                 android:gravity="end" android:id="@+id/wpos_edit_z" android:tag="Z"
                                 android:text='@{String.format("%.3f {fa-edit 16sp}", machineStatus.workPosition.cordZ)}'
-                                android:textColor="@{(machineStatus.toolLengthOffset != 0) ? @color/colorPrimary : @android:color/tertiary_text_dark}" />
+                                android:textColor="@{(machineStatus.toolLengthOffset != 0) ? @color/colorPrimary : @android:color/secondary_text_dark}" />
 
                         </TableRow>
 
