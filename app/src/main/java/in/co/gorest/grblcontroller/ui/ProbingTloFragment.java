@@ -41,6 +41,12 @@ public class ProbingTloFragment extends BaseFragment {
         grblProbe = GrblProbe.getInstance(getContext(), (GrblActivity) getActivity());
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        requireView().requestLayout();
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

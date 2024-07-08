@@ -1,0 +1,106 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="machineStatus"
+            type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
+    </data>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="4"
+        android:rowCount="2"
+        android:useDefaultMargins="true">
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/alarm_button"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:gravity="center"
+            android:tag="$X"
+            android:text='@{machineStatus.state.equals(machineStatus.STATE_ALARM) ? "{fa-bell 18dp @color/colorPrimary}" : "{fa-bell-slash-o 18dp}"}'
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/goto_x_zero"
+            android:text="X {fa-dot-circle-o 18dp}"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:tag="G10 L20 P0 X0"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/goto_y_zero"
+            android:text="Y {fa-dot-circle-o 18dp}"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:tag="G10 L20 P0 Y0"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/goto_z_zero"
+            android:text="Z {fa-dot-circle-o 18dp}"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:tag="G10 L20 P0 Z0"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/wpos_g54"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:tag="G54"
+            android:text="G54"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:id="@+id/wpos_g55"
+            android:tag="G55"
+            android:text="G55"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:id="@+id/wpos_g56"
+            android:tag="G56"
+            android:text="G56"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:id="@+id/wpos_g57"
+            android:tag="G57"
+            android:text="G57"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/custom_button_1"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:text="@string/text_value_na"
+            android:gravity="center" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/custom_button_2"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:text="@string/text_value_na"
+            android:gravity="center" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/custom_button_3"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:text="@string/text_value_na"
+            android:gravity="center" />
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/custom_button_4"
+            android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+            android:text="@string/text_value_na"
+            android:gravity="center" />
+    </GridLayout>
+</layout>

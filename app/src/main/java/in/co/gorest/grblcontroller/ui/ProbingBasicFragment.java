@@ -48,6 +48,12 @@ public class ProbingBasicFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        requireView().requestLayout();
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentProbingBasicBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_probing_basic, container, false);
         binding.setMachineStatus(machineStatus);
