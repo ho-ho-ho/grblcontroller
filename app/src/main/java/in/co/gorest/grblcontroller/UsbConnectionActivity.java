@@ -87,7 +87,6 @@ public class UsbConnectionActivity extends GrblActivity{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        onGcodeCommandReceived("$10=1");
         unregisterReceiver(mUsbReceiver);
         if(mBound){
             grblUsbSerialService.setMessageHandler(null);
@@ -259,8 +258,8 @@ public class UsbConnectionActivity extends GrblActivity{
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGrblSettingMessageEvent(GrblSettingMessageEvent event){
 
-        if(event.getSetting().equals("$10") && !event.getValue().equals("2")){
-            onGcodeCommandReceived("$10=2");
+        if (event.getSetting().equals("$10") && !event.getValue().equals("138")) {
+            onGcodeCommandReceived("$10=138");
         }
 
         if(event.getSetting().equals("$110") || event.getSetting().equals("$111") || event.getSetting().equals("$112")){
