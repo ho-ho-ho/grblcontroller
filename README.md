@@ -10,10 +10,14 @@ not work for everybody.
 - more probing options (support for a XYZ touch plate and center finding)
 - some drastic UI changes like having the probing on the jogging tab and jogging step quick change
   buttons
+- toggle between continuous and stepped jogging mode
 - removed the cam module (it generated paths that were useless for me and the reuse of the first
   custom button really makes no sense) - may add a better one in the future
 - the file sender tab now also displays the lower and upper bounds of each axis of a loaded file
 - upon loading a file, a preview image will also be generated to better help visualize the tool path
+
+![Jogging](https://raw.githubusercontent.com/ho-ho-ho/grblcontroller/master/doc/screenshots/NewJoggingTab.png "New Jogging Tab")
+![File Sender](https://raw.githubusercontent.com/ho-ho-ho/grblcontroller/master/doc/screenshots/NewFileSenderTab.png "New File Sender Tab")
 
 ---
 
