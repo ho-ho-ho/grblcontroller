@@ -325,8 +325,8 @@
             </TableLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="@{fileSender.bounds != null ? View.VISIBLE : View.GONE}"
                 android:padding="4dp"
-                android:background="@color/colorBlack"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <android.opengl.GLSurfaceView
