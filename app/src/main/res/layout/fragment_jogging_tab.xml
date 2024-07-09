@@ -45,33 +45,48 @@
 
             </RelativeLayout>
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/jog_step_selector"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:singleSelection="true">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/jog_step_small_button"
-                    style="?attr/materialButtonOutlinedStyle"
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/jog_step_selector"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Small" />
+                    android:layout_height="wrap_content"
+                    android:enabled="@{!continuousButton.checked}"
+                    app:singleSelection="true">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/jog_step_medium_button"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Medium" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jog_step_small_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Small" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/jog_step_high_button"
-                    style="?attr/materialButtonOutlinedStyle"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jog_step_medium_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Medium" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/jog_step_high_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Large" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <ToggleButton
+                    android:id="@+id/continuous_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Large" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:checked="true"
+                    android:textOn="continuous"
+                    android:textOff="stepped" />
+            </RelativeLayout>
 
             <View
                 android:layout_width="fill_parent"

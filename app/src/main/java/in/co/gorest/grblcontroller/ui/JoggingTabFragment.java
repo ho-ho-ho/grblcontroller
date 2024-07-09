@@ -25,10 +25,13 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +53,6 @@ import in.co.gorest.grblcontroller.databinding.FragmentJoggingTabBinding;
 import in.co.gorest.grblcontroller.events.JogCommandEvent;
 import in.co.gorest.grblcontroller.events.UiToastEvent;
 import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
-import in.co.gorest.grblcontroller.helpers.RepeatListener;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
 import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.util.GrblUtils;
@@ -59,6 +61,16 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
     private MachineStatusListener machineStatus;
     private EnhancedSharedPreferences sharedPref;
     MaterialButtonToggleGroup stepSelector;
+    ToggleButton continuousButton;
+    Handler continuousJogHandler;
+    String continuousTag;
+    Runnable continuousJogging = new Runnable() {
+        @Override
+        public void run() {
+            sendJogCommand(continuousTag);
+            continuousJogHandler.postDelayed(this, Constants.CONTINUOUS_DELAY);
+        }
+    };
 
     public JoggingTabFragment() {}
 
@@ -72,6 +84,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
         machineStatus = MachineStatusListener.getInstance();
         sharedPref = EnhancedSharedPreferences.getInstance(requireActivity().getApplicationContext(), getString(R.string.shared_preference_key));
         sharedPref.registerOnSharedPreferenceChangeListener(this);
+        continuousJogHandler = new Handler();
     }
 
     @Override
@@ -127,6 +140,8 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
         FragmentJoggingTabBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_jogging_tab, container, false);
         binding.setMachineStatus(machineStatus);
         View view = binding.getRoot();
+
+        continuousButton = view.findViewById(R.id.continuous_button);
 
         TabLayout probingTabLayout = view.findViewById(R.id.probing_tab_layout);
 
@@ -195,10 +210,27 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                 R.id.jog_y_negative, R.id.jog_x_negative, R.id.jog_z_negative}){
 
             final IconButton iconButton = view.findViewById(resourceId);
-            iconButton.setOnTouchListener(new RepeatListener(false, 300, 35));
+            iconButton.setOnTouchListener((view1, event) -> {
+                if (!continuousButton.isChecked()) {
+                    return false;
+                }
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        continuousTag = iconButton.getTag().toString();
+                        continuousJogHandler.post(continuousJogging);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        continuousJogHandler.removeCallbacks(continuousJogging);
+                        fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils.GRBL_JOG_CANCEL_COMMAND);
+                        return true;
+                }
+                return false;
+            });
 
             iconButton.setOnClickListener(view1 -> {
-                if(isAdded()){
+                if (isAdded() && !continuousButton.isChecked()) {
                     sendJogCommand(iconButton.getTag().toString());
                 }
             });
@@ -293,9 +325,11 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
             }
 
             Double stepSize;
-            if(tag.toUpperCase().contains("Z")){
+            if (continuousButton.isChecked()) {
+                stepSize = Constants.CONTINUOUS_STEP_SIZE;
+            } else if (tag.toUpperCase().contains("Z")) {
                 stepSize = machineStatus.getJogging().stepZ;
-            }else{
+            } else {
                 stepSize = machineStatus.getJogging().stepXY;
             }
 

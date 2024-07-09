@@ -48,6 +48,8 @@ public interface Constants {
     int PROBING_FEED_RATE               = 50;
     int PROBING_PLATE_THICKNESS         = 20;
     int PROBING_DISTANCE                = 15;
+    double CONTINUOUS_STEP_SIZE = 2.5;
+    int CONTINUOUS_DELAY = 50;
 
     String MACHINE_STATUS_IDLE          = "Idle";
     String MACHINE_STATUS_JOG           = "Jog";
