@@ -23,16 +23,18 @@ package in.co.gorest.grblcontroller.events;
 
 public class BluetoothDisconnectEvent {
 
-    private String message;
+  private String message;
 
-    public BluetoothDisconnectEvent(String message){
-        this.message = message;
-    }
+  public BluetoothDisconnectEvent(String message) {
+    this.message = message;
+  }
 
-    public String getMessage(){ return this.message; }
+  public String getMessage() {
+    return this.message;
+  }
 
-    public void setMessage(String message){
-        this.message = message;
-    }
+  public void setMessage(String message) {
+    this.message = message;
+  }
 
 }

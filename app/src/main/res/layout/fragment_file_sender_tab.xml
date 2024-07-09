@@ -3,9 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <import type="android.view.View"/>
-        <variable name="machineStatus" type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
-        <variable name="fileSender" type="in.co.gorest.grblcontroller.listeners.FileSenderListener" />
+        <import type="android.view.View" />
+        <variable
+            name="machineStatus"
+            type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
+        <variable
+            name="fileSender"
+            type="in.co.gorest.grblcontroller.listeners.FileSenderListener" />
     </data>
 
     <ScrollView
@@ -41,7 +45,11 @@
 
             </RelativeLayout>
 
-            <View android:layout_margin="4dp" android:layout_height="0.2dp" android:background="@color/colorDivider" android:layout_width="fill_parent"/>
+            <View
+                android:layout_margin="4dp"
+                android:layout_height="0.2dp"
+                android:background="@color/colorDivider"
+                android:layout_width="fill_parent" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -54,14 +62,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView app:layout_gravity="left" android:text="@string/text_lines_total_sent" />
-                    <TextView app:layout_gravity="right" android:text='@{fileSender.rowsInFile.toString() + " | " + fileSender.rowsSent.toString()}' />
+                    <TextView
+                        app:layout_gravity="left"
+                        android:text="@string/text_lines_total_sent" />
+                    <TextView
+                        app:layout_gravity="right"
+                        android:text='@{fileSender.rowsInFile.toString() + " | " + fileSender.rowsSent.toString()}' />
 
-                    <TextView app:layout_gravity="left" android:text="@string/text_time_elapsed" />
-                    <TextView app:layout_gravity="right" android:text="@{fileSender.elapsedTime}" />
+                    <TextView
+                        app:layout_gravity="left"
+                        android:text="@string/text_time_elapsed" />
+                    <TextView
+                        app:layout_gravity="right"
+                        android:text="@{fileSender.elapsedTime}" />
 
-                    <TextView app:layout_gravity="left" android:text='@{machineStatus.compileTimeOptions.variableSpindle ? @string/text_overrides_fsv : @string/text_overrides_fs}' />
-                    <TextView app:layout_gravity="right" android:text='@{machineStatus.overridePercents.feed.toString() + ":" + machineStatus.overridePercents.spindle.toString() + (machineStatus.compileTimeOptions.variableSpindle ? ":" + machineStatus.spindleSpeed : "")}' />
+                    <TextView
+                        app:layout_gravity="left"
+                        android:text='@{machineStatus.compileTimeOptions.variableSpindle ? @string/text_overrides_fsv : @string/text_overrides_fs}' />
+                    <TextView
+                        app:layout_gravity="right"
+                        android:text='@{machineStatus.overridePercents.feed.toString() + ":" + machineStatus.overridePercents.spindle.toString() + (machineStatus.compileTimeOptions.variableSpindle ? ":" + machineStatus.spindleSpeed : "")}' />
 
                 </androidx.gridlayout.widget.GridLayout>
 
@@ -110,7 +130,12 @@
                 </TableRow>
 
                 <TableRow>
-                    <View android:layout_margin="4dp" android:layout_height="0.2dp" android:layout_weight="1" android:background="@color/colorDivider" android:layout_width="fill_parent"/>
+                    <View
+                        android:layout_margin="4dp"
+                        android:layout_height="0.2dp"
+                        android:layout_weight="1"
+                        android:background="@color/colorDivider"
+                        android:layout_width="fill_parent" />
                 </TableRow>
 
                 <TableRow>
@@ -161,7 +186,8 @@
                         android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
                         android:text="{fa-fast-backward 16dp} S10"
                         android:id="@+id/spindle_override_coarse_minus"
-                        android:layout_weight="0.25" android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:layout_width="0dp"
                         android:gravity="center"
                         android:layout_height="wrap_content"
                         tools:ignore="HardcodedText" />
@@ -170,7 +196,8 @@
                         android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
                         android:text="{fa-backward 16dp} S1"
                         android:id="@+id/spindle_override_fine_minus"
-                        android:layout_weight="0.25" android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:layout_width="0dp"
                         android:gravity="center"
                         android:layout_height="wrap_content"
                         tools:ignore="HardcodedText" />

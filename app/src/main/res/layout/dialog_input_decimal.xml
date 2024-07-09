@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:padding="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/dialog_input_decimal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/rounded_border_edit_text"
+      android:inputType="numberDecimal"
+      android:padding="8dp"
+      tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/dialog_input_decimal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_border_edit_text"
-            android:inputType="numberDecimal"
-            android:padding="8dp"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+  </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

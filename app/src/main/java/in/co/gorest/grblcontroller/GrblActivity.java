@@ -43,7 +43,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -51,17 +50,12 @@ import androidx.cardview.widget.CardView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.google.android.material.tabs.TabLayout;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.joanzapata.iconify.widget.IconTextView;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import es.dmoral.toasty.Toasty;
 import in.co.gorest.grblcontroller.databinding.ActivityMainBinding;
 import in.co.gorest.grblcontroller.events.ConsoleMessageEvent;
@@ -81,8 +75,11 @@ import in.co.gorest.grblcontroller.service.GrblBluetoothSerialService;
 import in.co.gorest.grblcontroller.ui.BaseFragment;
 import in.co.gorest.grblcontroller.ui.GrblFragmentPagerAdapter;
 import in.co.gorest.grblcontroller.util.GrblUtils;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-public abstract class GrblActivity extends AppCompatActivity implements BaseFragment.OnFragmentInteractionListener{
+public abstract class GrblActivity extends AppCompatActivity implements
+    BaseFragment.OnFragmentInteractionListener {
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -104,22 +101,27 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        sharedPref = EnhancedSharedPreferences.getInstance(GrblController.getInstance(), getString(R.string.shared_preference_key));
+        sharedPref = EnhancedSharedPreferences.getInstance(GrblController.getInstance(),
+            getString(R.string.shared_preference_key));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) getSupportActionBar().setSubtitle(getString(R.string.text_not_connected));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(getString(R.string.text_not_connected));
+        }
 
         applicationSetup();
         binding.setMachineStatus(machineStatus);
 
         CardView viewLastToast = findViewById(R.id.view_last_toast);
         viewLastToast.setOnLongClickListener(view -> {
-            if(lastToast != null) lastToast.show();
+            if (lastToast != null) {
+                lastToast.show();
+            }
             return true;
         });
 
-        for(int resourceId: new Integer[]{R.id.wpos_edit_x, R.id.wpos_edit_y, R.id.wpos_edit_z}){
+        for (int resourceId : new Integer[]{R.id.wpos_edit_x, R.id.wpos_edit_y, R.id.wpos_edit_z}) {
             IconTextView positionTextView = findViewById(resourceId);
             positionTextView.setOnClickListener(v -> setWorkPosition(v.getTag().toString()));
         }
@@ -134,14 +136,15 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
         try {
             pm.getPackageInfo("in.co.gorest.grblcontroller.plus", PackageManager.GET_ACTIVITIES);
             return true;
-        } catch (PackageManager.NameNotFoundException ignored) {}
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
 
         return false;
     }
 
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
 
         stopService(new Intent(this, FileStreamerIntentService.class));
@@ -154,14 +157,18 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
     }
 
     @Override
-    public void onBackPressed(){ moveTaskToBack(true); }
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(menu != null){
+        if (menu != null) {
             MenuItem actionGrblSoftReset = menu.findItem(R.id.action_grbl_reset);
-            actionGrblSoftReset.setIcon(new IconDrawable(this, FontAwesomeIcons.fa_power_off).colorRes(R.color.colorWhite).sizeDp(24));
+            actionGrblSoftReset.setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_power_off).colorRes(R.color.colorWhite)
+                    .sizeDp(24));
 
         }
 
@@ -188,10 +195,10 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
                 sharingIntent.setType("text/plain");
                 String shareBodyText = "Grbl Controller. Very cool CNC controller for grbl firmware https://goo.gl/aVnvp4";
 
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Grbl Controller");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Grbl Controller");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
                 startActivity(Intent.createChooser(sharingIntent, "Sharing Option"));
-            }catch (ActivityNotFoundException e){
+            } catch (ActivityNotFoundException e) {
                 showToastMessage("No application available to perform this action!", true, true);
             }
 
@@ -201,41 +208,61 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
         return super.onOptionsItemSelected(item);
     }
 
-    protected void applicationSetup(){
+    protected void applicationSetup() {
         NotificationHelper notificationHelper = new NotificationHelper(this);
         notificationHelper.createChannels();
 
         consoleLogger = ConsoleLoggerListener.getInstance();
         machineStatus = MachineStatusListener.getInstance();
-        machineStatus.setJogging(sharedPref.getDouble(getString(R.string.preference_jogging_step_size), 1.00),
-                sharedPref.getDouble(getString(R.string.preference_jogging_step_size_z), 0.1),
-                sharedPref.getDouble(getString(R.string.preference_jogging_feed_rate), 2400.0),
-                sharedPref.getBoolean(getString(R.string.preference_jogging_in_inches), false));
-        machineStatus.setVerboseOutput(sharedPref.getBoolean(getString(R.string.preference_console_verbose_mode), false));
-        machineStatus.setIgnoreError20(sharedPref.getBoolean(getString(R.string.preference_ignore_error_20), false));
-        machineStatus.setUsbBaudRate(Integer.parseInt(sharedPref.getString(getString(R.string.usb_serial_baud_rate), Constants.USB_BAUD_RATE)));
-        machineStatus.setSingleStepMode(sharedPref.getBoolean(getString(R.string.preference_single_step_mode), false));
-        machineStatus.setCustomStartUpString(sharedPref.getString(getString(R.string.preference_start_up_string), ""));
+        machineStatus.setJogging(
+            sharedPref.getDouble(getString(R.string.preference_jogging_step_size), 1.00),
+            sharedPref.getDouble(getString(R.string.preference_jogging_step_size_z), 0.1),
+            sharedPref.getDouble(getString(R.string.preference_jogging_feed_rate), 2400.0),
+            sharedPref.getBoolean(getString(R.string.preference_jogging_in_inches), false));
+        machineStatus.setVerboseOutput(
+            sharedPref.getBoolean(getString(R.string.preference_console_verbose_mode), false));
+        machineStatus.setIgnoreError20(
+            sharedPref.getBoolean(getString(R.string.preference_ignore_error_20), false));
+        machineStatus.setUsbBaudRate(Integer.parseInt(
+            sharedPref.getString(getString(R.string.usb_serial_baud_rate),
+                Constants.USB_BAUD_RATE)));
+        machineStatus.setSingleStepMode(
+            sharedPref.getBoolean(getString(R.string.preference_single_step_mode), false));
+        machineStatus.setCustomStartUpString(
+            sharedPref.getString(getString(R.string.preference_start_up_string), ""));
 
     }
 
-    protected void setupTabLayout(){
+    protected void setupTabLayout() {
         TabLayout tabLayout = findViewById(R.id.tab_layout);
 
-        if(isTablet(this)){
-            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this, FontAwesomeIcons.fa_arrows_alt).colorRes(R.color.colorAccent).sizeDp(32)));
-            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this, FontAwesomeIcons.fa_file_text).colorRes(R.color.colorAccent).sizeDp(32)));
-            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this, FontAwesomeIcons.fa_television).colorRes(R.color.colorAccent).sizeDp(32)));
-        }else{
-            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this, FontAwesomeIcons.fa_arrows_alt).colorRes(R.color.colorAccent).sizeDp(21)));
-            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this, FontAwesomeIcons.fa_file_text).colorRes(R.color.colorAccent).sizeDp(21)));
-            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this, FontAwesomeIcons.fa_television).colorRes(R.color.colorAccent).sizeDp(21)));
+        if (isTablet(this)) {
+            tabLayout.addTab(tabLayout.newTab().setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_arrows_alt).colorRes(R.color.colorAccent)
+                    .sizeDp(32)));
+            tabLayout.addTab(tabLayout.newTab().setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_file_text).colorRes(R.color.colorAccent)
+                    .sizeDp(32)));
+            tabLayout.addTab(tabLayout.newTab().setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_television).colorRes(R.color.colorAccent)
+                    .sizeDp(32)));
+        } else {
+            tabLayout.addTab(tabLayout.newTab().setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_arrows_alt).colorRes(R.color.colorAccent)
+                    .sizeDp(21)));
+            tabLayout.addTab(tabLayout.newTab().setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_file_text).colorRes(R.color.colorAccent)
+                    .sizeDp(21)));
+            tabLayout.addTab(tabLayout.newTab().setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_television).colorRes(R.color.colorAccent)
+                    .sizeDp(21)));
         }
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager2 viewPager = findViewById(R.id.tab_layout_pager);
-        final GrblFragmentPagerAdapter pagerAdapter = new GrblFragmentPagerAdapter(this, tabLayout.getTabCount());
+        final GrblFragmentPagerAdapter pagerAdapter = new GrblFragmentPagerAdapter(this,
+            tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -252,74 +279,90 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
     }
 
-    private void setWorkPosition(final String axisLabel){
+    private void setWorkPosition(final String axisLabel) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View v = inflater.inflate(R.layout.dialog_input_decimal_signed, null, false);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(v);
         alertDialogBuilder.setTitle(getString(R.string.test_set_cordinate_system, axisLabel));
-        alertDialogBuilder.setMessage(getString(R.string.test_set_cordinate_system_description, axisLabel));
+        alertDialogBuilder.setMessage(
+            getString(R.string.test_set_cordinate_system_description, axisLabel));
 
         final EditText editText = v.findViewById(R.id.dialog_input_decimal_signed);
-        if(axisLabel.equalsIgnoreCase("X")) editText.setText(String.valueOf(machineStatus.getWorkPosition().getCordX()));
-        if(axisLabel.equalsIgnoreCase("Y")) editText.setText(String.valueOf(machineStatus.getWorkPosition().getCordY()));
-        if(axisLabel.equalsIgnoreCase("Z")) editText.setText(String.valueOf(machineStatus.getWorkPosition().getCordZ()));
+        if (axisLabel.equalsIgnoreCase("X")) {
+            editText.setText(String.valueOf(machineStatus.getWorkPosition().getCordX()));
+        }
+        if (axisLabel.equalsIgnoreCase("Y")) {
+            editText.setText(String.valueOf(machineStatus.getWorkPosition().getCordY()));
+        }
+        if (axisLabel.equalsIgnoreCase("Z")) {
+            editText.setText(String.valueOf(machineStatus.getWorkPosition().getCordZ()));
+        }
         editText.setSelection(editText.getText().length());
 
         alertDialogBuilder.setCancelable(true)
-                .setPositiveButton(getString(R.string.text_ok), (dialog, id) -> {
-                    String axisValue = editText.getText().toString();
-                    if(axisValue.length() > 0){
-                        sendCommandIfIdle("G10L20P0" + axisLabel + axisValue);
+            .setPositiveButton(getString(R.string.text_ok), (dialog, id) -> {
+                String axisValue = editText.getText().toString();
+                if (axisValue.length() > 0) {
+                    sendCommandIfIdle("G10L20P0" + axisLabel + axisValue);
+                }
+            })
+            .setNeutralButton("/2",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Double val = Double.parseDouble(editText.getText().toString());
+                        val = val / 2;
+                        String axisValue = val.toString();
+                        if (axisValue.length() > 0) {
+                            sendCommandIfIdle("G10L20P0" + axisLabel + axisValue);
+                        }
                     }
                 })
-                .setNeutralButton("/2",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                Double val = Double.parseDouble( editText.getText().toString());
-                                val=val/2;
-                                String axisValue=val.toString();
-                                if(axisValue.length() > 0){
-                                    sendCommandIfIdle("G10L20P0" + axisLabel + axisValue);
-                                }
-                            }
-                        })
-                .setNegativeButton(getString(R.string.text_cancel), (dialog, id) -> dialog.cancel());
+            .setNegativeButton(getString(R.string.text_cancel), (dialog, id) -> dialog.cancel());
 
         AlertDialog dialog = alertDialogBuilder.create();
-        if(dialog.getWindow() != null) dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow()
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
         dialog.show();
     }
 
-    private void sendCommandIfIdle(String command){
-        if(machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)){
+    private void sendCommandIfIdle(String command) {
+        if (machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)) {
             onGcodeCommandReceived(command);
-        }else{
+        } else {
             showToastMessage(getString(R.string.text_machine_not_idle), true, true);
         }
     }
 
-    protected void showToastMessage(String message){
+    protected void showToastMessage(String message) {
         this.showToastMessage(message, false, false);
     }
 
     @SuppressLint("ShowToast")
-    protected void showToastMessage(String message, Boolean longToast, Boolean isWarning){
-        if(isWarning){
-            lastToast = Toasty.warning(this, message, longToast ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT, true);
-        }else{
-            lastToast = Toasty.success(this, message, longToast ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+    protected void showToastMessage(String message, Boolean longToast, Boolean isWarning) {
+        if (isWarning) {
+            lastToast = Toasty.warning(this, message,
+                longToast ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT,
+                true);
+        } else {
+            lastToast = Toasty.success(this, message,
+                longToast ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
         }
 
-        lastToast.setGravity(Gravity.FILL_HORIZONTAL|Gravity.TOP, 0, 120);
+        lastToast.setGravity(Gravity.FILL_HORIZONTAL | Gravity.TOP, 0, 120);
         lastToast.show();
     }
 
@@ -333,62 +376,65 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
 
     }
 
-    public static boolean isTablet(Context context){
-        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+            & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    private void checkPowerManagement(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    private void checkPowerManagement() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 
-            if(pm != null && !pm.isIgnoringBatteryOptimizations(getPackageName())){
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(getPackageName())) {
 
                 new AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.text_power_management_warning_title))
-                        .setMessage(getString(R.string.text_power_management_warning_description))
-                        .setPositiveButton(getString(R.string.text_settings), (dialog, which) -> {
-                            try {
-                                Intent myIntent = new Intent();
-                                myIntent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                                startActivity(myIntent);
-                            } catch (RuntimeException ignored) {}
-                        })
-                        .setNegativeButton(getString(R.string.text_cancel), null)
-                        .setCancelable(false)
-                        .show();
+                    .setTitle(getString(R.string.text_power_management_warning_title))
+                    .setMessage(getString(R.string.text_power_management_warning_description))
+                    .setPositiveButton(getString(R.string.text_settings), (dialog, which) -> {
+                        try {
+                            Intent myIntent = new Intent();
+                            myIntent.setAction(
+                                Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                            startActivity(myIntent);
+                        } catch (RuntimeException ignored) {
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.text_cancel), null)
+                    .setCancelable(false)
+                    .show();
 
             }
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGrblAlarmEvent(GrblAlarmEvent event){
+    public void onGrblAlarmEvent(GrblAlarmEvent event) {
         consoleLogger.offerMessage(event.toString());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void  onGrblErrorEvent(GrblErrorEvent event){
+    public void onGrblErrorEvent(GrblErrorEvent event) {
         consoleLogger.offerMessage(event.toString());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onConsoleMessageEvent(ConsoleMessageEvent event){
+    public void onConsoleMessageEvent(ConsoleMessageEvent event) {
         consoleLogger.offerMessage(event.getMessage());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUiToastEvent(UiToastEvent event){
+    public void onUiToastEvent(UiToastEvent event) {
         showToastMessage(event.getMessage(), event.getLongToast(), event.getIsWarning());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void OnStreamingCompleteEvent(StreamingCompleteEvent event){
+    public void OnStreamingCompleteEvent(StreamingCompleteEvent event) {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void OnStreamingStartEvent(StreamingStartedEvent event){
-        if(sharedPref.getBoolean(getString(R.string.preference_keep_screen_on), false)){
+    public void OnStreamingStartEvent(StreamingStartedEvent event) {
+        if (sharedPref.getBoolean(getString(R.string.preference_keep_screen_on), false)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
@@ -397,19 +443,23 @@ public abstract class GrblActivity extends AppCompatActivity implements BaseFrag
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.tab_layout_pager + ":" + 1);
-        if(fragment != null) fragment.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(
+            "android:switcher:" + R.id.tab_layout_pager + ":" + 1);
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event){
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if(keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE){
-            if(machineStatus.getState().equals(Constants.MACHINE_STATUS_RUN)){
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+            || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE) {
+            if (machineStatus.getState().equals(Constants.MACHINE_STATUS_RUN)) {
                 onGrblRealTimeCommandReceived(GrblUtils.GRBL_PAUSE_COMMAND);
                 return true;
             }
 
-            if(machineStatus.getState().equals(Constants.MACHINE_STATUS_HOLD)){
+            if (machineStatus.getState().equals(Constants.MACHINE_STATUS_HOLD)) {
                 onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESUME_COMMAND);
                 return true;
             }

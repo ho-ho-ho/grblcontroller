@@ -1,28 +1,26 @@
 package in.co.gorest.grblcontroller.adapters;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.util.List;
-
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.model.CommandHistory;
+import java.util.List;
 
-public class CommandHistoryAdapter extends RecyclerView.Adapter<CommandHistoryAdapter.ViewHolder>{
+public class CommandHistoryAdapter extends RecyclerView.Adapter<CommandHistoryAdapter.ViewHolder> {
 
     private final List<CommandHistory> dataSet;
     private View.OnClickListener onItemClickListener;
     private View.OnLongClickListener onLongClickListener;
 
-    public CommandHistoryAdapter(List<CommandHistory> dataSet){
+    public CommandHistoryAdapter(List<CommandHistory> dataSet) {
         this.dataSet = dataSet;
     }
 
-    public void setItemLongClickListener(View.OnLongClickListener longClickListener){
+    public void setItemLongClickListener(View.OnLongClickListener longClickListener) {
         onLongClickListener = longClickListener;
     }
 
@@ -32,8 +30,9 @@ public class CommandHistoryAdapter extends RecyclerView.Adapter<CommandHistoryAd
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.command_history, parent, false);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.command_history, parent, false);
         return new ViewHolder(view);
     }
 
@@ -47,10 +46,11 @@ public class CommandHistoryAdapter extends RecyclerView.Adapter<CommandHistoryAd
         return dataSet.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
+
         private final TextView commandText;
 
-        public ViewHolder(View itemView){
+        public ViewHolder(View itemView) {
             super(itemView);
 
             commandText = itemView.findViewById(R.id.history_command_text);

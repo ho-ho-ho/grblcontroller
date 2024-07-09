@@ -1,26 +1,27 @@
 package in.co.gorest.grblcontroller.util;
 
+import in.co.gorest.grblcontroller.model.Bounds;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import in.co.gorest.grblcontroller.model.Bounds;
 
 // very rudimentary gcode parser, for now only keeps track of motion and distance modals.
 // used to find the min/max values of each axis of a given gcode file
 public class SimpleGcodeParser {
+
     public interface GcodeParserListener {
+
         void move(double x, double y, double z);
 
         void rapidMove(double x, double y, double z);
     }
 
-    private GcodeParserListener listener;
+    private final GcodeParserListener listener;
 
     private int motionMode = -1; // G0, G1, G2, G3, G38.2, G38.3, G38.4, G38.5, G80
     private int distanceMode = -1; // G90, G91
-    private Pattern wordPattern = Pattern.compile("([A-Z])(-?[0-9.]+)");
+    private final Pattern wordPattern = Pattern.compile("([A-Z])(-?[0-9.]+)");
 
-    private Bounds bounds;
+    private final Bounds bounds;
 
     private double lastX = 0.0;
     private double lastY = 0.0;

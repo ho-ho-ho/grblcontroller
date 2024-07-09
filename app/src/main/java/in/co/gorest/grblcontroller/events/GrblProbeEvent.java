@@ -30,27 +30,38 @@ public class GrblProbeEvent {
     private Position probePosition;
     private Boolean isProbeSuccess = false;
 
-    public GrblProbeEvent(String probeString){
+    public GrblProbeEvent(String probeString) {
         this.probeString = probeString;
         this.parseProbeString();
     }
 
-    private void parseProbeString(){
+    private void parseProbeString() {
         String[] parts = probeString.split(":");
         String[] coordinates = parts[0].split(",");
 
-        this.probePosition = new Position(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]), Double.parseDouble(coordinates[2]));
+        this.probePosition = new Position(Double.parseDouble(coordinates[0]),
+                Double.parseDouble(coordinates[1]), Double.parseDouble(coordinates[2]));
         this.isProbeSuccess = parts[1].equals("1");
     }
 
-    public Boolean getIsProbeSuccess(){ return this.isProbeSuccess; }
+    public Boolean getIsProbeSuccess() {
+        return this.isProbeSuccess;
+    }
 
-    public Double getProbeCordX(){ return this.probePosition.getCordX(); }
+    public Double getProbeCordX() {
+        return this.probePosition.getCordX();
+    }
 
-    public Double getProbeCordY(){ return this.probePosition.getCordY(); }
+    public Double getProbeCordY() {
+        return this.probePosition.getCordY();
+    }
 
-    public Double getProbeCordZ(){ return this.probePosition.getCordZ(); }
+    public Double getProbeCordZ() {
+        return this.probePosition.getCordZ();
+    }
 
-    public Position getProbePosition(){ return this.probePosition; }
+    public Position getProbePosition() {
+        return this.probePosition;
+    }
 
 }

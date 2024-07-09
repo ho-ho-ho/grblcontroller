@@ -23,10 +23,8 @@ package in.co.gorest.grblcontroller.listeners;
 
 
 import android.net.Uri;
-
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-
 import in.co.gorest.grblcontroller.BR;
 import in.co.gorest.grblcontroller.model.Bounds;
 import in.co.gorest.grblcontroller.model.Constants;
@@ -34,103 +32,133 @@ import in.co.gorest.grblcontroller.util.GrblUtils;
 
 public class FileSenderListener extends BaseObservable {
 
-    private String gcodeFileName;
-    private Uri gcodeUri;
-    private Integer rowsInFile;
-    private Integer rowsSent;
+  private String gcodeFileName;
+  private Uri gcodeUri;
+  private Integer rowsInFile;
+  private Integer rowsSent;
 
-    private String status;
-    private Bounds bounds;
+  private String status;
+  private Bounds bounds;
 
-    public static final String STATUS_IDLE = "Idle";
-    public static final String STATUS_READING = "Reading";
-    public static final String STATUS_STREAMING = "Streaming";
+  public static final String STATUS_IDLE = "Idle";
+  public static final String STATUS_READING = "Reading";
+  public static final String STATUS_STREAMING = "Streaming";
 
-    private long jobStartTime = 0L;
-    private long jobEndTime = 0L;
-    private String elapsedTime = "00:00:00";
+  private long jobStartTime = 0L;
+  private long jobEndTime = 0L;
+  private String elapsedTime = "00:00:00";
 
-    private static FileSenderListener fileSenderListener = null;
-    public static FileSenderListener getInstance(){
-        if(fileSenderListener == null) fileSenderListener = new FileSenderListener();
-        return fileSenderListener;
+  private static FileSenderListener fileSenderListener = null;
+
+  public static FileSenderListener getInstance() {
+    if (fileSenderListener == null) {
+      fileSenderListener = new FileSenderListener();
     }
+    return fileSenderListener;
+  }
 
-    public static void resetClass(){
-        fileSenderListener = new FileSenderListener();
-    }
+  public static void resetClass() {
+    fileSenderListener = new FileSenderListener();
+  }
 
-    private FileSenderListener(){
-        this.setStatus(STATUS_IDLE);
-        this.bounds = null;
-        this.gcodeFileName = " " + GrblUtils.implode(" | ", Constants.SUPPORTED_FILE_TYPES);
-        //this.gcodeFile = null;
-        this.gcodeUri = null;
-        this.rowsInFile = 0;
-        this.rowsSent = 0;
-    }
+  private FileSenderListener() {
+    this.setStatus(STATUS_IDLE);
+    this.bounds = null;
+    this.gcodeFileName = " " + GrblUtils.implode(" | ", Constants.SUPPORTED_FILE_TYPES);
+    //this.gcodeFile = null;
+    this.gcodeUri = null;
+    this.rowsInFile = 0;
+    this.rowsSent = 0;
+  }
 
-    @Bindable
-    public Bounds getBounds() { return this.bounds; }
-    public void setBounds(Bounds bounds) {
-        this.bounds = bounds;
-        notifyPropertyChanged(BR.bounds);
-    }
+  @Bindable
+  public Bounds getBounds() {
+    return this.bounds;
+  }
 
-    @Bindable
-    public String getGcodeFileName(){ return this.gcodeFileName; }
-    public void setGcodeFileName(String gcodeFileName){
-        this.gcodeFileName = gcodeFileName;
-        notifyPropertyChanged(BR.gcodeFileName);
-    }
+  public void setBounds(Bounds bounds) {
+    this.bounds = bounds;
+    notifyPropertyChanged(BR.bounds);
+  }
 
-    @Bindable
-    public Uri getGcodeUri() { return this.gcodeUri; }
-    public void setGcodeUri(Uri uri) {
-        this.gcodeUri = uri;
-        notifyPropertyChanged(BR.gcodeUri);
-    }
+  @Bindable
+  public String getGcodeFileName() {
+    return this.gcodeFileName;
+  }
 
-    @Bindable
-    public Integer getRowsInFile(){ return this.rowsInFile; }
-    public void setRowsInFile(Integer rowsInFile){
-        this.rowsInFile = rowsInFile;
-        notifyPropertyChanged(BR.rowsInFile);
-    }
+  public void setGcodeFileName(String gcodeFileName) {
+    this.gcodeFileName = gcodeFileName;
+    notifyPropertyChanged(BR.gcodeFileName);
+  }
 
-    @Bindable
-    public Integer getRowsSent(){ return this.rowsSent; }
-    public void setRowsSent(Integer rowsSent){
-        this.rowsSent = rowsSent;
-        notifyPropertyChanged(BR.rowsSent);
-    }
+  @Bindable
+  public Uri getGcodeUri() {
+    return this.gcodeUri;
+  }
 
-    @Bindable
-    public long getJobStartTime(){ return this.jobStartTime; }
-    public void setJobStartTime(long startTime){
-        this.jobStartTime = startTime;
-        notifyPropertyChanged(BR.jobStartTime);
-    }
+  public void setGcodeUri(Uri uri) {
+    this.gcodeUri = uri;
+    notifyPropertyChanged(BR.gcodeUri);
+  }
 
-    @Bindable
-    public long getJobEndTime(){ return this.jobEndTime; }
-    public void setJobEndTime(long endTime){
-        this.jobEndTime = endTime;
-        notifyPropertyChanged(BR.jobEndTime);
-    }
+  @Bindable
+  public Integer getRowsInFile() {
+    return this.rowsInFile;
+  }
 
-    @Bindable
-    public String getElapsedTime(){ return this.elapsedTime; }
-    public void setElapsedTime(String elapsedTime){
-        this.elapsedTime = elapsedTime;
-        notifyPropertyChanged(BR.elapsedTime);
-    }
+  public void setRowsInFile(Integer rowsInFile) {
+    this.rowsInFile = rowsInFile;
+    notifyPropertyChanged(BR.rowsInFile);
+  }
 
-    @Bindable
-    public String getStatus(){ return this.status; }
-    public void setStatus(String status){
-        this.status = status;
-        notifyPropertyChanged(BR.status);
-    }
+  @Bindable
+  public Integer getRowsSent() {
+    return this.rowsSent;
+  }
+
+  public void setRowsSent(Integer rowsSent) {
+    this.rowsSent = rowsSent;
+    notifyPropertyChanged(BR.rowsSent);
+  }
+
+  @Bindable
+  public long getJobStartTime() {
+    return this.jobStartTime;
+  }
+
+  public void setJobStartTime(long startTime) {
+    this.jobStartTime = startTime;
+    notifyPropertyChanged(BR.jobStartTime);
+  }
+
+  @Bindable
+  public long getJobEndTime() {
+    return this.jobEndTime;
+  }
+
+  public void setJobEndTime(long endTime) {
+    this.jobEndTime = endTime;
+    notifyPropertyChanged(BR.jobEndTime);
+  }
+
+  @Bindable
+  public String getElapsedTime() {
+    return this.elapsedTime;
+  }
+
+  public void setElapsedTime(String elapsedTime) {
+    this.elapsedTime = elapsedTime;
+    notifyPropertyChanged(BR.elapsedTime);
+  }
+
+  @Bindable
+  public String getStatus() {
+    return this.status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+    notifyPropertyChanged(BR.status);
+  }
 
 }

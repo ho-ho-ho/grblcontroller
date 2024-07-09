@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
 import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
 import in.co.gorest.grblcontroller.model.Constants;
 
@@ -41,9 +40,12 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        EnhancedSharedPreferences sharedPref = EnhancedSharedPreferences.getInstance(GrblController.getInstance(), getString(R.string.shared_preference_key));
+        EnhancedSharedPreferences sharedPref = EnhancedSharedPreferences.getInstance(
+                GrblController.getInstance(), getString(R.string.shared_preference_key));
 
-        String defaultConnection = sharedPref.getString(getString(R.string.preference_default_serial_connection_type), Constants.SERIAL_CONNECTION_TYPE_BLUETOOTH);
+        String defaultConnection = sharedPref.getString(
+                getString(R.string.preference_default_serial_connection_type),
+                Constants.SERIAL_CONNECTION_TYPE_BLUETOOTH);
 
         if (Constants.SERIAL_CONNECTION_TYPE_USB_OTG.equals(defaultConnection)) {
             startActivity(new Intent(SplashActivity.this, UsbConnectionActivity.class));

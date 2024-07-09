@@ -3,18 +3,17 @@ package in.co.gorest.grblcontroller.ui;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-
+import in.co.gorest.grblcontroller.model.Bounds;
+import in.co.gorest.grblcontroller.util.SimpleGcodeParser;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import in.co.gorest.grblcontroller.model.Bounds;
-import in.co.gorest.grblcontroller.util.SimpleGcodeParser;
+public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer,
+        SimpleGcodeParser.GcodeParserListener {
 
-public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGcodeParser.GcodeParserListener {
     // allocate 256MB RAM for vertices
     private static final int NUM_VERTICES = (256 * 1024 * 1024) / 12;
 
@@ -45,9 +44,12 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
     }
 
     private GCodeVisualizerRenderer() {
-        vertices = ByteBuffer.allocateDirect(NUM_VERTICES * 3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        axisBuffer = ByteBuffer.allocateDirect(4 * 2 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        axisBuffer.put(new float[]{0.0f, 10.0f, 0.0f, -10.0f, 10.0f, 0.0f, -10.0f, 0.0f,}).position(0);
+        vertices = ByteBuffer.allocateDirect(NUM_VERTICES * 3 * 4).order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+        axisBuffer = ByteBuffer.allocateDirect(4 * 2 * 4).order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+        axisBuffer.put(new float[]{0.0f, 10.0f, 0.0f, -10.0f, 10.0f, 0.0f, -10.0f, 0.0f,})
+                .position(0);
     }
 
     public void setBounds(Bounds bounds) {
@@ -112,7 +114,8 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
                         "void main()\n" +
                         "{\n" +
                         "  v_Color = vec4(1.0, 0.4, 0.4, 1.0);\n" +
-                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1.0);\n" +
+                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1.0);\n"
+                        +
                         "}\n";
 
         final String fragmentShader =
@@ -132,7 +135,9 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
         GLES30.glGetShaderiv(vertexShaderHandle, GLES30.GL_COMPILE_STATUS, compileStatus, 0);
         if (compileStatus[0] == 0) {
             //GLES30.glDeleteShader(vertexShaderHandle);
-            throw new RuntimeException("Error compiling vertex shader: " + GLES30.glGetShaderInfoLog(vertexShaderHandle));
+            throw new RuntimeException(
+                    "Error compiling vertex shader: " + GLES30.glGetShaderInfoLog(
+                            vertexShaderHandle));
         }
 
         int fragmentShaderHandle = GLES30.glCreateShader(GLES30.GL_FRAGMENT_SHADER);
@@ -141,7 +146,9 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
         GLES30.glGetShaderiv(fragmentShaderHandle, GLES30.GL_COMPILE_STATUS, compileStatus, 0);
         if (compileStatus[0] == 0) {
             //GLES30.glDeleteShader(fragmentShaderHandle);
-            throw new RuntimeException("Error compiling fragment shader: " + GLES30.glGetShaderInfoLog(fragmentShaderHandle));
+            throw new RuntimeException(
+                    "Error compiling fragment shader: " + GLES30.glGetShaderInfoLog(
+                            fragmentShaderHandle));
         }
 
         zeroProgram = GLES30.glCreateProgram();
@@ -172,7 +179,8 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
                         "  } else {\n" +
                         "    v_Color = vec4(0.0, 1.0, 0.0, 1.0);\n" +
                         "  }\n" +
-                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1.0);\n" +
+                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1.0);\n"
+                        +
                         "}\n";
 
         final String fragmentShader =
@@ -192,7 +200,9 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
         GLES30.glGetShaderiv(vertexShaderHandle, GLES30.GL_COMPILE_STATUS, compileStatus, 0);
         if (compileStatus[0] == 0) {
             //GLES30.glDeleteShader(vertexShaderHandle);
-            throw new RuntimeException("Error compiling vertex shader: " + GLES30.glGetShaderInfoLog(vertexShaderHandle));
+            throw new RuntimeException(
+                    "Error compiling vertex shader: " + GLES30.glGetShaderInfoLog(
+                            vertexShaderHandle));
         }
 
         int fragmentShaderHandle = GLES30.glCreateShader(GLES30.GL_FRAGMENT_SHADER);
@@ -201,7 +211,9 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
         GLES30.glGetShaderiv(fragmentShaderHandle, GLES30.GL_COMPILE_STATUS, compileStatus, 0);
         if (compileStatus[0] == 0) {
             //GLES30.glDeleteShader(fragmentShaderHandle);
-            throw new RuntimeException("Error compiling fragment shader: " + GLES30.glGetShaderInfoLog(fragmentShaderHandle));
+            throw new RuntimeException(
+                    "Error compiling fragment shader: " + GLES30.glGetShaderInfoLog(
+                            fragmentShaderHandle));
         }
 
         defaultProgram = GLES30.glCreateProgram();
@@ -251,7 +263,8 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer, SimpleGc
         GLES30.glUniformMatrix4fv(zeroMVPMatrixHandle, 1, false, mProjectionMatrix, 0);
 
         axisBuffer.position(0);
-        GLES30.glVertexAttribPointer(zeroPositionHandle, 2, GLES30.GL_FLOAT, false, 2 * 4, axisBuffer);
+        GLES30.glVertexAttribPointer(zeroPositionHandle, 2, GLES30.GL_FLOAT, false, 2 * 4,
+                axisBuffer);
         GLES30.glEnableVertexAttribArray(zeroPositionHandle);
 
         GLES30.glDrawArrays(GLES30.GL_LINES, 0, 4);

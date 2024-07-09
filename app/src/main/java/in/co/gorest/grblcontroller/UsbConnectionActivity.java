@@ -38,14 +38,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import in.co.gorest.grblcontroller.events.GrblSettingMessageEvent;
 import in.co.gorest.grblcontroller.events.JogCommandEvent;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
@@ -53,8 +47,11 @@ import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.service.FileStreamerIntentService;
 import in.co.gorest.grblcontroller.service.GrblUsbSerialService;
 import in.co.gorest.grblcontroller.util.GrblUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-public class UsbConnectionActivity extends GrblActivity{
+public class UsbConnectionActivity extends GrblActivity {
 
     private GrblUsbSerialService grblUsbSerialService;
     private GrblServiceMessageHandler grblServiceMessageHandler;
@@ -72,14 +69,14 @@ public class UsbConnectionActivity extends GrblActivity{
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         setFilters();  // Start listening notifications from UsbService
 
         Intent intent = new Intent(getApplicationContext(), GrblUsbSerialService.class);
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
             getApplicationContext().startForegroundService(intent);
-        }else{
+        } else {
             startService(intent);
         }
     }
@@ -88,7 +85,7 @@ public class UsbConnectionActivity extends GrblActivity{
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mUsbReceiver);
-        if(mBound){
+        if (mBound) {
             grblUsbSerialService.setMessageHandler(null);
             unbindService(usbConnection);
             mBound = false;
@@ -102,7 +99,9 @@ public class UsbConnectionActivity extends GrblActivity{
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         MenuItem actionConnect = menu.findItem(R.id.action_connect);
-        actionConnect.setIcon(new IconDrawable(this, FontAwesomeIcons.fa_usb).colorRes(R.color.colorWhite).sizeDp(24));
+        actionConnect.setIcon(
+                new IconDrawable(this, FontAwesomeIcons.fa_usb).colorRes(R.color.colorWhite)
+                        .sizeDp(24));
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -114,26 +113,30 @@ public class UsbConnectionActivity extends GrblActivity{
         if (id == R.id.action_connect) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this)
                     .setTitle("USB OTG Connection")
-                    .setMessage("To connect or disconnect a device, just plug or unplug the usb cable.")
+                    .setMessage(
+                            "To connect or disconnect a device, just plug or unplug the usb cable.")
                     .setPositiveButton(getString(R.string.text_ok), (dialog, which) -> {
                     })
                     .setCancelable(false);
 
             alertDialogBuilder.show();
         } else if (id == R.id.action_grbl_reset) {
-            boolean resetConfirm = sharedPref.getBoolean(getString(R.string.preference_confirm_grbl_soft_reset), true);
+            boolean resetConfirm = sharedPref.getBoolean(
+                    getString(R.string.preference_confirm_grbl_soft_reset), true);
             if (resetConfirm) {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.text_grbl_soft_reset)
                         .setMessage(R.string.text_grbl_soft_reset_desc)
-                        .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> {
-                            if (FileStreamerIntentService.getIsServiceRunning()) {
-                                FileStreamerIntentService.setShouldContinue(false);
-                                Intent intent = new Intent(getApplicationContext(), FileStreamerIntentService.class);
-                                stopService(intent);
-                            }
-                            onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
-                        })
+                        .setPositiveButton(getString(R.string.text_yes_confirm),
+                                (dialog, which) -> {
+                                    if (FileStreamerIntentService.getIsServiceRunning()) {
+                                        FileStreamerIntentService.setShouldContinue(false);
+                                        Intent intent = new Intent(getApplicationContext(),
+                                                FileStreamerIntentService.class);
+                                        stopService(intent);
+                                    }
+                                    onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
+                                })
                         .setNegativeButton(getString(R.string.text_cancel), null)
                         .show();
 
@@ -188,36 +191,50 @@ public class UsbConnectionActivity extends GrblActivity{
         public void onReceive(Context context, Intent intent) {
 
             String intentAction = intent.getAction();
-            if(intentAction == null){
+            if (intentAction == null) {
                 showToastMessage("Unknown error", true, true);
                 return;
             }
 
             switch (intentAction) {
                 case GrblUsbSerialService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
-                    if(getSupportActionBar() != null) getSupportActionBar().setSubtitle(getString(R.string.text_connected));
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setSubtitle(getString(R.string.text_connected));
+                    }
                     showToastMessage(getString(R.string.text_usb_device_connected));
                     break;
                 case GrblUsbSerialService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
-                    if(getSupportActionBar() != null) getSupportActionBar().setSubtitle(R.string.text_no_usb_permission);
-                    showToastMessage(getString(R.string.text_usb_permission_not_granted), true, true);
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setSubtitle(R.string.text_no_usb_permission);
+                    }
+                    showToastMessage(getString(R.string.text_usb_permission_not_granted), true,
+                            true);
                     break;
                 case GrblUsbSerialService.ACTION_NO_USB: // NO USB CONNECTED
-                    if(getSupportActionBar() != null) getSupportActionBar().setSubtitle(R.string.text_no_usb_device);
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setSubtitle(R.string.text_no_usb_device);
+                    }
                     //grblToast("USB device not connected");
                     break;
                 case GrblUsbSerialService.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
-                    if(getSupportActionBar() != null) getSupportActionBar().setSubtitle(getString(R.string.text_not_connected));
-                    MachineStatusListener.getInstance().setState(Constants.MACHINE_STATUS_NOT_CONNECTED);
-                    if(FileStreamerIntentService.getIsServiceRunning()){
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setSubtitle(getString(R.string.text_not_connected));
+                    }
+                    MachineStatusListener.getInstance()
+                            .setState(Constants.MACHINE_STATUS_NOT_CONNECTED);
+                    if (FileStreamerIntentService.getIsServiceRunning()) {
                         FileStreamerIntentService.setShouldContinue(false);
-                        stopService(new Intent(getApplicationContext(), FileStreamerIntentService.class));
+                        stopService(new Intent(getApplicationContext(),
+                                FileStreamerIntentService.class));
                     }
                     showToastMessage(getString(R.string.text_usb_device_disconnected), true, true);
                     break;
                 case GrblUsbSerialService.ACTION_USB_NOT_SUPPORTED: // USB NOT SUPPORTED
-                    if(getSupportActionBar() != null) getSupportActionBar().setSubtitle(R.string.text_usb_device_not_supported);
-                    MachineStatusListener.getInstance().setState(Constants.MACHINE_STATUS_NOT_CONNECTED);
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setSubtitle(R.string.text_usb_device_not_supported);
+                    }
+                    MachineStatusListener.getInstance()
+                            .setState(Constants.MACHINE_STATUS_NOT_CONNECTED);
                     showToastMessage(getString(R.string.text_usb_device_not_supported), true, true);
                     break;
             }
@@ -230,7 +247,9 @@ public class UsbConnectionActivity extends GrblActivity{
             grblUsbSerialService = ((GrblUsbSerialService.UsbSerialBinder) service).getService();
             mBound = true;
             grblUsbSerialService.setMessageHandler(grblServiceMessageHandler);
-            grblUsbSerialService.setStatusUpdatePoolInterval(Long.parseLong(sharedPref.getString(getString(R.string.preference_update_pool_interval), String.valueOf(Constants.GRBL_STATUS_UPDATE_INTERVAL))));
+            grblUsbSerialService.setStatusUpdatePoolInterval(Long.parseLong(
+                    sharedPref.getString(getString(R.string.preference_update_pool_interval),
+                            String.valueOf(Constants.GRBL_STATUS_UPDATE_INTERVAL))));
         }
 
         @Override
@@ -243,34 +262,46 @@ public class UsbConnectionActivity extends GrblActivity{
 
     @Override
     public void onGcodeCommandReceived(String command) {
-        if(grblUsbSerialService != null){
+        if (grblUsbSerialService != null) {
             grblUsbSerialService.serialWriteString(command);
         }
     }
 
     @Override
     public void onGrblRealTimeCommandReceived(byte command) {
-        if(grblUsbSerialService != null) grblUsbSerialService.serialWriteByte(command);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onJogCommandEvent(JogCommandEvent event){
-        if(machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE) || machineStatus.getState().equals(Constants.MACHINE_STATUS_JOG)){
-            if(machineStatus.getPlannerBuffer() > 5) onGcodeCommandReceived(event.getCommand());
+        if (grblUsbSerialService != null) {
+            grblUsbSerialService.serialWriteByte(command);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGrblSettingMessageEvent(GrblSettingMessageEvent event){
+    public void onJogCommandEvent(JogCommandEvent event) {
+        if (machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)
+                || machineStatus.getState()
+                .equals(Constants.MACHINE_STATUS_JOG)) {
+            if (machineStatus.getPlannerBuffer() > 5) {
+                onGcodeCommandReceived(event.getCommand());
+            }
+        }
+    }
 
-        if(event.getSetting().equals("$110") || event.getSetting().equals("$111") || event.getSetting().equals("$112")){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGrblSettingMessageEvent(GrblSettingMessageEvent event) {
+
+        if (event.getSetting().equals("$110") || event.getSetting().equals("$111")
+                || event.getSetting()
+                .equals("$112")) {
             double maxFeedRate = Double.parseDouble(event.getValue());
-            if(maxFeedRate > sharedPref.getDouble(getString(R.string.preference_jogging_max_feed_rate), machineStatus.getJogging().feed)){
-                sharedPref.edit().putDouble(getString(R.string.preference_jogging_max_feed_rate), maxFeedRate).apply();
+            if (maxFeedRate > sharedPref.getDouble(
+                    getString(R.string.preference_jogging_max_feed_rate),
+                    machineStatus.getJogging().feed)) {
+                sharedPref.edit()
+                        .putDouble(getString(R.string.preference_jogging_max_feed_rate),
+                                maxFeedRate).apply();
             }
         }
 
-        if(event.getSetting().equals("$32")){
+        if (event.getSetting().equals("$32")) {
             machineStatus.setLaserModeEnabled(event.getValue().equals("1"));
         }
 

@@ -29,11 +29,11 @@ public class FcmNotificationRecieved {
 
     private final GrblNotification grblNotification;
 
-    public FcmNotificationRecieved(GrblNotification grblNotification){
+    public FcmNotificationRecieved(GrblNotification grblNotification) {
         this.grblNotification = grblNotification;
     }
 
-    public GrblNotification getGrblNotification(){
+    public GrblNotification getGrblNotification() {
         return this.grblNotification;
     }
 

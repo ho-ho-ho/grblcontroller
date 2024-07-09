@@ -21,11 +21,12 @@
 
 package in.co.gorest.grblcontroller.helpers;
 
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
-import android.view.View;
 
 class ZoomOutPageTransformer implements ViewPager.PageTransformer {
+
     private static final float MIN_SCALE = 0.85f;
     private static final float MIN_ALPHA = 0.5f;
 
@@ -54,8 +55,8 @@ class ZoomOutPageTransformer implements ViewPager.PageTransformer {
 
             // Fade the page relative to its size.
             view.setAlpha(MIN_ALPHA +
-                    (scaleFactor - MIN_SCALE) /
-                            (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+                (scaleFactor - MIN_SCALE) /
+                    (1 - MIN_SCALE) * (1 - MIN_ALPHA));
 
         } else { // (1,+Infinity]
             // This page is way off-screen to the right.

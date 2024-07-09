@@ -31,20 +31,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatDelegate;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.greenrobot.eventbus.EventBus;
-
+import androidx.appcompat.app.AppCompatDelegate;
+import in.co.gorest.grblcontroller.events.UiToastEvent;
 import java.util.Collections;
 import java.util.Set;
-
-import in.co.gorest.grblcontroller.events.UiToastEvent;
+import org.greenrobot.eventbus.EventBus;
 
 
 public class DeviceListActivity extends Activity {
@@ -63,8 +60,10 @@ public class DeviceListActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(mBtAdapter == null){
-            EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_bluetooth_adapter_error), true, true));
+        if (mBtAdapter == null) {
+            EventBus.getDefault()
+                    .post(new UiToastEvent(getString(R.string.text_bluetooth_adapter_error), true,
+                            true));
             finish();
         }
 
@@ -73,7 +72,8 @@ public class DeviceListActivity extends Activity {
         setContentView(R.layout.activity_device_list);
         setResult(Activity.RESULT_CANCELED);
 
-        ArrayAdapter<String> pairedDevicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name);
+        ArrayAdapter<String> pairedDevicesArrayAdapter = new ArrayAdapter<>(this,
+                R.layout.device_name);
         mNewDevicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name);
 
         ListView pairedListView = findViewById(R.id.paired_devices);
@@ -86,12 +86,13 @@ public class DeviceListActivity extends Activity {
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(mReceiver, filter);
 
-
         Set<BluetoothDevice> pairedDevices = Collections.emptySet();
         try {
             pairedDevices = mBtAdapter.getBondedDevices();
-        }catch (Exception e){
-            EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_bluetooth_adaptor_error), true, true));
+        } catch (Exception e) {
+            EventBus.getDefault()
+                    .post(new UiToastEvent(getString(R.string.text_bluetooth_adaptor_error), true,
+                            true));
             finish();
         }
 
@@ -123,7 +124,7 @@ public class DeviceListActivity extends Activity {
 
             String info = ((TextView) v).getText().toString();
 
-            if(info.length() > 16){
+            if (info.length() > 16) {
                 String address = info.substring(info.length() - 17);
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_DEVICE_ADDRESS, address);

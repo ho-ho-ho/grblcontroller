@@ -26,84 +26,88 @@ package in.co.gorest.grblcontroller.listeners;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
-import org.greenrobot.eventbus.EventBus;
-
+import in.co.gorest.grblcontroller.events.ConsoleMessageEvent;
+import in.co.gorest.grblcontroller.model.Constants;
+import in.co.gorest.grblcontroller.service.GrblUsbSerialService;
+import in.co.gorest.grblcontroller.util.GrblUtils;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import in.co.gorest.grblcontroller.events.ConsoleMessageEvent;
-import in.co.gorest.grblcontroller.model.Constants;
-import in.co.gorest.grblcontroller.service.GrblUsbSerialService;
-import in.co.gorest.grblcontroller.util.GrblUtils;
+import org.greenrobot.eventbus.EventBus;
 
 public class SerialUsbCommunicationHandler extends SerialCommunicationHandler {
 
-    private final ExecutorService singleThreadExecutor;
-    private ScheduledExecutorService grblStatusUpdater = null;
+  private final ExecutorService singleThreadExecutor;
+  private ScheduledExecutorService grblStatusUpdater = null;
 
-    private final WeakReference<GrblUsbSerialService> mService;
+  private final WeakReference<GrblUsbSerialService> mService;
 
-    public SerialUsbCommunicationHandler(GrblUsbSerialService grblUsbSerialService){
-        mService = new WeakReference<>(grblUsbSerialService);
-        singleThreadExecutor = Executors.newSingleThreadExecutor();
-    }
+  public SerialUsbCommunicationHandler(GrblUsbSerialService grblUsbSerialService) {
+    mService = new WeakReference<>(grblUsbSerialService);
+    singleThreadExecutor = Executors.newSingleThreadExecutor();
+  }
 
-    @Override
-    public void handleMessage(Message msg){
+  @Override
+  public void handleMessage(Message msg) {
 
-        final GrblUsbSerialService grblUsbSerialService = mService.get();
+    final GrblUsbSerialService grblUsbSerialService = mService.get();
 
-        switch(msg.what){
-            case Constants.MESSAGE_READ:
-                if(msg.arg1 > 0){
-                    final String message = (String) msg.obj;
-                    if(!singleThreadExecutor.isShutdown()){
-                        singleThreadExecutor.submit(() -> onUsbSerialRead(message.trim(), grblUsbSerialService));
-                    }
-                }
-                break;
-
-            case Constants.MESSAGE_WRITE:
-                final String message = (String) msg.obj;
-                EventBus.getDefault().post(new ConsoleMessageEvent(message));
-                break;
+    switch (msg.what) {
+      case Constants.MESSAGE_READ:
+        if (msg.arg1 > 0) {
+          final String message = (String) msg.obj;
+          if (!singleThreadExecutor.isShutdown()) {
+            singleThreadExecutor.submit(
+                () -> onUsbSerialRead(message.trim(), grblUsbSerialService));
+          }
         }
+        break;
 
+      case Constants.MESSAGE_WRITE:
+        final String message = (String) msg.obj;
+        EventBus.getDefault().post(new ConsoleMessageEvent(message));
+        break;
     }
 
-    private void onUsbSerialRead(String message, final GrblUsbSerialService grblUsbSerialService){
+  }
 
-        boolean isVersionString = onSerialRead(message);
+  private void onUsbSerialRead(String message, final GrblUsbSerialService grblUsbSerialService) {
 
-        if(isVersionString){
-            GrblUsbSerialService.isGrblFound = true;
+    boolean isVersionString = onSerialRead(message);
 
-            Handler handler = new Handler(Looper.getMainLooper());
+    if (isVersionString) {
+      GrblUsbSerialService.isGrblFound = true;
 
-            long delayMillis = grblUsbSerialService.getStatusUpdatePoolInterval();
-            for(final String startUpCommand: this.getStartUpCommands()){
-                handler.postDelayed(() -> grblUsbSerialService.serialWriteString(startUpCommand), delayMillis);
+      Handler handler = new Handler(Looper.getMainLooper());
 
-                delayMillis = delayMillis + grblUsbSerialService.getStatusUpdatePoolInterval();
-            }
-            startGrblStatusUpdateService(grblUsbSerialService);
-        }
+      long delayMillis = grblUsbSerialService.getStatusUpdatePoolInterval();
+      for (final String startUpCommand : this.getStartUpCommands()) {
+        handler.postDelayed(() -> grblUsbSerialService.serialWriteString(startUpCommand),
+            delayMillis);
+
+        delayMillis = delayMillis + grblUsbSerialService.getStatusUpdatePoolInterval();
+      }
+      startGrblStatusUpdateService(grblUsbSerialService);
     }
+  }
 
-    private void startGrblStatusUpdateService(final GrblUsbSerialService grblUsbSerialService){
-        stopGrblStatusUpdateService();
+  private void startGrblStatusUpdateService(final GrblUsbSerialService grblUsbSerialService) {
+    stopGrblStatusUpdateService();
 
-        grblStatusUpdater = Executors.newScheduledThreadPool(1);
-        grblStatusUpdater.scheduleWithFixedDelay(() -> grblUsbSerialService.serialWriteByte(GrblUtils.GRBL_STATUS_COMMAND), grblUsbSerialService.getStatusUpdatePoolInterval(), grblUsbSerialService.getStatusUpdatePoolInterval(), TimeUnit.MILLISECONDS);
+    grblStatusUpdater = Executors.newScheduledThreadPool(1);
+    grblStatusUpdater.scheduleWithFixedDelay(
+        () -> grblUsbSerialService.serialWriteByte(GrblUtils.GRBL_STATUS_COMMAND),
+        grblUsbSerialService.getStatusUpdatePoolInterval(),
+        grblUsbSerialService.getStatusUpdatePoolInterval(), TimeUnit.MILLISECONDS);
 
+  }
+
+  public void stopGrblStatusUpdateService() {
+    if (grblStatusUpdater != null) {
+      grblStatusUpdater.shutdownNow();
     }
-
-    public void stopGrblStatusUpdateService(){
-        if(grblStatusUpdater != null) grblStatusUpdater.shutdownNow();
-    }
+  }
 
 }

@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <variable name="machineStatus" type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
+        <variable
+            name="machineStatus"
+            type="in.co.gorest.grblcontroller.listeners.MachineStatusListener" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -62,7 +64,8 @@
                                 android:text="@{machineStatus.state}"
                                 android:textColor="@{machineStatus.state.equalsIgnoreCase(machineStatus.STATE_ALARM) ? @color/colorPrimary : @android:color/secondary_text_dark}" />
 
-                            <TextView android:text="MPos"
+                            <TextView
+                                android:text="MPos"
                                 tools:ignore="HardcodedText" />
 
                             <TextView
@@ -92,7 +95,9 @@
                             <TextView android:text='@{String.format("%.3f", machineStatus.machinePosition.cordX)}' />
 
                             <com.joanzapata.iconify.widget.IconTextView
-                                android:gravity="end" android:id="@+id/wpos_edit_x" android:tag="X"
+                                android:gravity="end"
+                                android:id="@+id/wpos_edit_x"
+                                android:tag="X"
                                 android:text='@{String.format("%.3f {fa-edit 16sp}", machineStatus.workPosition.cordX)}' />
 
                         </TableRow>
@@ -118,7 +123,9 @@
                             <TextView android:text='@{String.format("%.3f", machineStatus.machinePosition.cordY)}' />
 
                             <com.joanzapata.iconify.widget.IconTextView
-                                android:gravity="end" android:id="@+id/wpos_edit_y" android:tag="Y"
+                                android:gravity="end"
+                                android:id="@+id/wpos_edit_y"
+                                android:tag="Y"
                                 android:text='@{String.format("%.3f {fa-edit 16sp}", machineStatus.workPosition.cordY)}' />
 
                         </TableRow>
@@ -144,7 +151,9 @@
                             <TextView android:text='@{String.format("%.3f", machineStatus.machinePosition.cordZ)}' />
 
                             <com.joanzapata.iconify.widget.IconTextView
-                                android:gravity="end" android:id="@+id/wpos_edit_z" android:tag="Z"
+                                android:gravity="end"
+                                android:id="@+id/wpos_edit_z"
+                                android:tag="Z"
                                 android:text='@{String.format("%.3f {fa-edit 16sp}", machineStatus.workPosition.cordZ)}'
                                 android:textColor="@{(machineStatus.toolLengthOffset != 0) ? @color/colorPrimary : @android:color/secondary_text_dark}" />
 
@@ -221,6 +230,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

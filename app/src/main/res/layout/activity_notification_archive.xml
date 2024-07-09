@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ /*
   ~  *  /**
   ~  *  * Copyright (C) 2017  Grbl Controller Contributors
@@ -23,32 +22,33 @@
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context=".NotificationArchiveActivity">
+
+  <LinearLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".NotificationArchiveActivity">
+    android:layout_height="wrap_content"
+    tools:ignore="MissingConstraints">
 
-    <LinearLayout android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints">
+    <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/recycler_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:scrollbars="vertical" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"/>
+    <TextView
+      android:id="@+id/empty_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:layout_marginTop="20dp"
+      android:visibility="gone"
+      android:text="No new notifications"
+      tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:visibility="gone"
-            android:text="No new notifications"
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
+  </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

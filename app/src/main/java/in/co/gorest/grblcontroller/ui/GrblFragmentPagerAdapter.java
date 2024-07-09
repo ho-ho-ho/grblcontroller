@@ -30,28 +30,28 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class GrblFragmentPagerAdapter extends FragmentStateAdapter {
 
-    public final int tabCount;
+  public final int tabCount;
 
-    public GrblFragmentPagerAdapter(FragmentActivity activity, int tabCount) {
-        super(activity);
-        this.tabCount = tabCount;
-    }
+  public GrblFragmentPagerAdapter(FragmentActivity activity, int tabCount) {
+    super(activity);
+    this.tabCount = tabCount;
+  }
 
-    @NonNull
-    @Override
-    public Fragment createFragment(int position) {
-        switch (position) {
-            case 1:
-                return FileSenderTabFragment.newInstance();
-            case 2:
-                return ConsoleTabFragment.newInstance();
-            default:
-                return JoggingTabFragment.newInstance();
-        }
+  @NonNull
+  @Override
+  public Fragment createFragment(int position) {
+    switch (position) {
+      case 1:
+        return FileSenderTabFragment.newInstance();
+      case 2:
+        return ConsoleTabFragment.newInstance();
+      default:
+        return JoggingTabFragment.newInstance();
     }
+  }
 
-    @Override
-    public int getItemCount() {
-        return tabCount;
-    }
+  @Override
+  public int getItemCount() {
+    return tabCount;
+  }
 }

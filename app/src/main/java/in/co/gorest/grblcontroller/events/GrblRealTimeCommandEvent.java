@@ -27,11 +27,11 @@ public class GrblRealTimeCommandEvent {
 
     private final byte command;
 
-    public GrblRealTimeCommandEvent(byte command){
+    public GrblRealTimeCommandEvent(byte command) {
         this.command = command;
     }
 
-    public byte getCommand(){
+    public byte getCommand() {
         return this.command;
     }
 

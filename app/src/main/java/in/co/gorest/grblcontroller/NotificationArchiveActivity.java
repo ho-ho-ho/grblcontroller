@@ -23,25 +23,21 @@
 
 package in.co.gorest.grblcontroller;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.View;
 import android.widget.TextView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
-import java.util.Objects;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import in.co.gorest.grblcontroller.adapters.NotificationAdapter;
 import in.co.gorest.grblcontroller.events.FcmNotificationRecieved;
 import in.co.gorest.grblcontroller.listeners.EndlessRecyclerViewScrollListener;
 import in.co.gorest.grblcontroller.model.GrblNotification;
+import java.util.List;
+import java.util.Objects;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class NotificationArchiveActivity extends AppCompatActivity {
 
@@ -56,11 +52,13 @@ public class NotificationArchiveActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
-        final List<GrblNotification> dataSet = GrblNotification.find(GrblNotification.class, null, null, null, "id DESC", "0, 10");
-        if(dataSet.size() == 0){
+        final List<GrblNotification> dataSet = GrblNotification.find(GrblNotification.class, null,
+                null,
+                null, "id DESC", "0, 10");
+        if (dataSet.size() == 0) {
             TextView emptyView = findViewById(R.id.empty_view);
             emptyView.setVisibility(View.VISIBLE);
         }
@@ -72,25 +70,30 @@ public class NotificationArchiveActivity extends AppCompatActivity {
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                String limit = page * 10 + ", 10";
-                List<GrblNotification> moreItems = GrblNotification.find(GrblNotification.class, null, null, null, "id DESC", limit);
-                dataSet.addAll(moreItems);
-                notificationAdapter.notifyItemRangeInserted(notificationAdapter.getItemCount(), dataSet.size() - 1);
-            }
-        });
+        recyclerView.addOnScrollListener(
+                new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                    @Override
+                    public void onLoadMore(int page, int totalItemsCount) {
+                        String limit = page * 10 + ", 10";
+                        List<GrblNotification> moreItems = GrblNotification.find(
+                                GrblNotification.class, null, null,
+                                null, "id DESC", limit);
+                        dataSet.addAll(moreItems);
+                        notificationAdapter.notifyItemRangeInserted(
+                                notificationAdapter.getItemCount(),
+                                dataSet.size() - 1);
+                    }
+                });
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onFcmNotificationReceived(FcmNotificationRecieved notificationReceived){
+    public void onFcmNotificationReceived(FcmNotificationRecieved notificationReceived) {
 
     }
 

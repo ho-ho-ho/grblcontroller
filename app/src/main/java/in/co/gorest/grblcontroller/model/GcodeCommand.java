@@ -28,42 +28,53 @@ import in.co.gorest.grblcontroller.util.GrblUtils;
 
 public class GcodeCommand {
 
-    private String command;
-    private String comment;
-    private Integer size;
-    private Boolean hasRomAccess;
+  private String command;
+  private String comment;
+  private Integer size;
+  private Boolean hasRomAccess;
 
-    public GcodeCommand(){}
+  public GcodeCommand() {
+  }
 
-    public GcodeCommand(String command) {
-        this.command = command;
-        this.parseCommand();
+  public GcodeCommand(String command) {
+    this.command = command;
+    this.parseCommand();
+  }
+
+  public void setCommand(String command) {
+    this.command = command;
+    this.parseCommand();
+  }
+
+  private void parseCommand() {
+    this.comment = GcodePreprocessorUtils.parseComment(command);
+    if (this.getHasComment()) {
+      this.command = GcodePreprocessorUtils.removeComment(command);
     }
+    this.command = GcodePreprocessorUtils.removeWhiteSpace(command);
+    this.size = this.command.length() + 1;
+    this.hasRomAccess = GrblUtils.hasRomAccess(this.command);
+  }
 
-    public void setCommand(String command){
-        this.command = command;
-        this.parseCommand();
-    }
+  public String getCommandString() {
+    return this.command;
+  }
 
-    private void parseCommand(){
-        this.comment = GcodePreprocessorUtils.parseComment(command);
-        if(this.getHasComment()) this.command = GcodePreprocessorUtils.removeComment(command);
-        this.command = GcodePreprocessorUtils.removeWhiteSpace(command);
-        this.size = this.command.length() + 1;
-        this.hasRomAccess = GrblUtils.hasRomAccess(this.command);
-    }
+  private boolean getHasComment() {
+    return this.comment != null && this.comment.length() != 0;
+  }
 
-    public String getCommandString() {
-        return this.command;
-    }
+  public Boolean getHasRomAccess() {
+    return this.hasRomAccess;
+  }
 
-    private boolean getHasComment() {
-        return this.comment != null && this.comment.length() != 0;
-    }
+  public void setHasRomAccess(Boolean hasRomAccess) {
+    this.hasRomAccess = hasRomAccess;
+  }
 
-    public Boolean getHasRomAccess(){ return this.hasRomAccess; }
-    public void setHasRomAccess(Boolean hasRomAccess) { this.hasRomAccess = hasRomAccess; }
-    public Integer getSize(){ return this.size; }
+  public Integer getSize() {
+    return this.size;
+  }
 
 
 }
