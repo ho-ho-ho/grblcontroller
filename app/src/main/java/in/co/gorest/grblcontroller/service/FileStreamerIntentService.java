@@ -29,7 +29,23 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.Process;
 import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.events.GrblErrorEvent;
 import in.co.gorest.grblcontroller.events.GrblOkEvent;
@@ -42,18 +58,6 @@ import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
 import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.model.GcodeCommand;
 import in.co.gorest.grblcontroller.util.GrblUtils;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 
 public class FileStreamerIntentService extends IntentService {
@@ -127,7 +131,8 @@ public class FileStreamerIntentService extends IntentService {
 
         machineStatusListener = MachineStatusListener.getInstance();
 
-        MachineStatusListener.CompileTimeOptions compileTimeOptions = machineStatusListener.getCompileTimeOptions();
+        MachineStatusListener.CompileTimeOptions compileTimeOptions =
+                machineStatusListener.getCompileTimeOptions();
         if (compileTimeOptions.serialRxBuffer > 0) {
             MAX_RX_SERIAL_BUFFER = compileTimeOptions.serialRxBuffer - 3;
         }

@@ -3,13 +3,16 @@ package in.co.gorest.grblcontroller.ui;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import in.co.gorest.grblcontroller.model.Bounds;
-import in.co.gorest.grblcontroller.util.SimpleGcodeParser;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import in.co.gorest.grblcontroller.model.Bounds;
+import in.co.gorest.grblcontroller.util.SimpleGcodeParser;
 
 public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer,
         SimpleGcodeParser.GcodeParserListener {
@@ -114,7 +117,8 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer,
                         "void main()\n" +
                         "{\n" +
                         "  v_Color = vec4(1.0, 0.4, 0.4, 1.0);\n" +
-                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1.0);\n"
+                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1"
+                        + ".0);\n"
                         +
                         "}\n";
 
@@ -179,7 +183,8 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer,
                         "  } else {\n" +
                         "    v_Color = vec4(0.0, 1.0, 0.0, 1.0);\n" +
                         "  }\n" +
-                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1.0);\n"
+                        "   gl_Position = u_MVPMatrix * vec4(a_Position.x, a_Position.y, 0.0, 1"
+                        + ".0);\n"
                         +
                         "}\n";
 

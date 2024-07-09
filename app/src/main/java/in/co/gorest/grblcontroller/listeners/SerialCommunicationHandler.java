@@ -28,6 +28,9 @@ import static org.greenrobot.eventbus.EventBus.TAG;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import org.greenrobot.eventbus.EventBus;
+
 import in.co.gorest.grblcontroller.GrblController;
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.events.ConsoleMessageEvent;
@@ -41,7 +44,6 @@ import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.model.Position;
 import in.co.gorest.grblcontroller.util.GrblLookups;
 import in.co.gorest.grblcontroller.util.GrblUtils;
-import org.greenrobot.eventbus.EventBus;
 
 public abstract class SerialCommunicationHandler extends Handler {
 

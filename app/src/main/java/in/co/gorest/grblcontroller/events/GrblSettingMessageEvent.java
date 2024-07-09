@@ -22,10 +22,13 @@
 package in.co.gorest.grblcontroller.events;
 
 import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
-import in.co.gorest.grblcontroller.util.GrblLookups;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import in.co.gorest.grblcontroller.util.GrblLookups;
 
 public class GrblSettingMessageEvent {
 

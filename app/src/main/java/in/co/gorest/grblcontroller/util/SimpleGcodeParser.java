@@ -1,8 +1,9 @@
 package in.co.gorest.grblcontroller.util;
 
-import in.co.gorest.grblcontroller.model.Bounds;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import in.co.gorest.grblcontroller.model.Bounds;
 
 // very rudimentary gcode parser, for now only keeps track of motion and distance modals.
 // used to find the min/max values of each axis of a given gcode file

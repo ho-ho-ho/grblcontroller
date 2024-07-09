@@ -32,17 +32,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.viewpager2.widget.ViewPager2;
+
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.joanzapata.iconify.widget.IconButton;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
+
+import org.greenrobot.eventbus.EventBus;
+
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.databinding.FragmentJoggingTabBinding;
 import in.co.gorest.grblcontroller.events.JogCommandEvent;
@@ -51,7 +56,6 @@ import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
 import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.util.GrblUtils;
-import org.greenrobot.eventbus.EventBus;
 
 public class JoggingTabFragment extends BaseFragment implements View.OnClickListener,
         View.OnLongClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -319,9 +323,11 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
             }
 
             /*TODO: implement a way to stop custom command
-            if (customCommandsAsyncTask != null && customCommandsAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+            if (customCommandsAsyncTask != null && customCommandsAsyncTask.getStatus() ==
+            AsyncTask.Status.RUNNING) {
                 customCommandsAsyncTask.cancel(true);
-                fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
+                fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils
+                .GRBL_RESET_COMMAND);
             }*/
         }
     }

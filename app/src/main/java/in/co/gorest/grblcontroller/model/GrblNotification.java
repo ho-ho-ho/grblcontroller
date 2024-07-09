@@ -24,6 +24,7 @@
 package in.co.gorest.grblcontroller.model;
 
 import com.orm.SugarRecord;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,115 +33,115 @@ import java.util.Objects;
 
 public class GrblNotification extends SugarRecord {
 
-  public String title;
-  public String message;
-  public String type;
-  public String categoryName;
-  public String categoryValue;
-  public String payload;
-  public String receivedOn;
-  public String status;
+    public String title;
+    public String message;
+    public String type;
+    public String categoryName;
+    public String categoryValue;
+    public String payload;
+    public String receivedOn;
+    public String status;
 
-  public GrblNotification() {
-  }
-
-  public GrblNotification(String title, String message) {
-    this.title = title;
-    this.message = message;
-    this.receivedOn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(
-        Calendar.getInstance().getTime());
-    this.status = "unread";
-  }
-
-  public GrblNotification(String title, String message, String type, String categoryName,
-      String categoryValue, String payload) {
-    this.title = title;
-    this.message = message;
-    this.type = type;
-    this.categoryName = categoryName;
-    this.categoryValue = categoryValue;
-    this.payload = payload;
-    this.receivedOn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(
-        Calendar.getInstance().getTime());
-    this.status = "unread";
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getTitle() {
-    return this.title;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public String getMessage() {
-    return this.message;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getType() {
-    return this.type;
-  }
-
-  public void setCategoryName(String categoryName) {
-    this.categoryName = categoryName;
-  }
-
-  public String getCategoryName() {
-    return this.categoryName;
-  }
-
-  public void setCategoryValue(String categoryValue) {
-    this.categoryValue = categoryValue;
-  }
-
-  public String getCategoryValue() {
-    return this.categoryValue;
-  }
-
-  public void setPayload(String payload) {
-    this.payload = payload;
-  }
-
-  public String getPayload() {
-    return this.payload;
-  }
-
-  public void setReceivedOn(String receivedOn) {
-    this.receivedOn = receivedOn;
-  }
-
-  public String getReceivedOn() {
-    return this.receivedOn;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  public String getStatus() {
-    return this.status;
-  }
-
-  public String getNotificationTime() {
-    if (this.receivedOn != null) {
-      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-          Locale.ENGLISH);
-      try {
-        return new SimpleDateFormat("d MMM, yyyy HH:mm:ss", Locale.ENGLISH).format(
-            Objects.requireNonNull(simpleDateFormat.parse(this.receivedOn)));
-      } catch (ParseException e) {
-        e.printStackTrace();
-      }
+    public GrblNotification() {
     }
-    return null;
-  }
+
+    public GrblNotification(String title, String message) {
+        this.title = title;
+        this.message = message;
+        this.receivedOn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(
+                Calendar.getInstance().getTime());
+        this.status = "unread";
+    }
+
+    public GrblNotification(String title, String message, String type, String categoryName,
+            String categoryValue, String payload) {
+        this.title = title;
+        this.message = message;
+        this.type = type;
+        this.categoryName = categoryName;
+        this.categoryValue = categoryValue;
+        this.payload = payload;
+        this.receivedOn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(
+                Calendar.getInstance().getTime());
+        this.status = "unread";
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryName() {
+        return this.categoryName;
+    }
+
+    public void setCategoryValue(String categoryValue) {
+        this.categoryValue = categoryValue;
+    }
+
+    public String getCategoryValue() {
+        return this.categoryValue;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+
+    public String getPayload() {
+        return this.payload;
+    }
+
+    public void setReceivedOn(String receivedOn) {
+        this.receivedOn = receivedOn;
+    }
+
+    public String getReceivedOn() {
+        return this.receivedOn;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    public String getNotificationTime() {
+        if (this.receivedOn != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                    Locale.ENGLISH);
+            try {
+                return new SimpleDateFormat("d MMM, yyyy HH:mm:ss", Locale.ENGLISH).format(
+                        Objects.requireNonNull(simpleDateFormat.parse(this.receivedOn)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
 }

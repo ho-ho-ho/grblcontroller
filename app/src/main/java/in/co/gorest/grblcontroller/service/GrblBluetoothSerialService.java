@@ -37,7 +37,20 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.UUID;
+
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.events.GrblRealTimeCommandEvent;
 import in.co.gorest.grblcontroller.events.UiToastEvent;
@@ -46,15 +59,6 @@ import in.co.gorest.grblcontroller.listeners.SerialBluetoothCommunicationHandler
 import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.model.GcodeCommand;
 import in.co.gorest.grblcontroller.util.GrblUtils;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.UUID;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class GrblBluetoothSerialService extends Service {
 
@@ -493,7 +497,8 @@ public class GrblBluetoothSerialService extends Service {
     }
 
     /**
-     * This thread runs during a connection with a remote device. It handles all incoming and outgoing
+     * This thread runs during a connection with a remote device. It handles all incoming and
+     * outgoing
      * transmissions.
      */
     private class ConnectedThread extends Thread {

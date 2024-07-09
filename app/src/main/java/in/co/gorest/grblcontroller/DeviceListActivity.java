@@ -37,11 +37,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatDelegate;
-import in.co.gorest.grblcontroller.events.UiToastEvent;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Collections;
 import java.util.Set;
-import org.greenrobot.eventbus.EventBus;
+
+import in.co.gorest.grblcontroller.events.UiToastEvent;
 
 
 public class DeviceListActivity extends Activity {
@@ -117,24 +121,25 @@ public class DeviceListActivity extends Activity {
         this.unregisterReceiver(mReceiver);
     }
 
-    private final AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
-        @SuppressLint("MissingPermission")
-        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            mBtAdapter.cancelDiscovery();
+    private final AdapterView.OnItemClickListener mDeviceClickListener =
+            new AdapterView.OnItemClickListener() {
+                @SuppressLint("MissingPermission")
+                public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+                    mBtAdapter.cancelDiscovery();
 
-            String info = ((TextView) v).getText().toString();
+                    String info = ((TextView) v).getText().toString();
 
-            if (info.length() > 16) {
-                String address = info.substring(info.length() - 17);
-                Intent intent = new Intent();
-                intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+                    if (info.length() > 16) {
+                        String address = info.substring(info.length() - 17);
+                        Intent intent = new Intent();
+                        intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-            }
+                        setResult(Activity.RESULT_OK, intent);
+                        finish();
+                    }
 
-        }
-    };
+                }
+            };
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @SuppressLint("MissingPermission")

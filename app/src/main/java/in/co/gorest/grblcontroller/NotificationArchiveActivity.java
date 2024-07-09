@@ -26,18 +26,22 @@ package in.co.gorest.grblcontroller;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
+import java.util.Objects;
+
 import in.co.gorest.grblcontroller.adapters.NotificationAdapter;
 import in.co.gorest.grblcontroller.events.FcmNotificationRecieved;
 import in.co.gorest.grblcontroller.listeners.EndlessRecyclerViewScrollListener;
 import in.co.gorest.grblcontroller.model.GrblNotification;
-import java.util.List;
-import java.util.Objects;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class NotificationArchiveActivity extends AppCompatActivity {
 

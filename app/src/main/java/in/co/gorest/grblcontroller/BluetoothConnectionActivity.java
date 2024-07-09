@@ -37,9 +37,19 @@ import android.os.IBinder;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import androidx.core.app.ActivityCompat;
+
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.lang.ref.WeakReference;
+import java.util.Objects;
+
 import in.co.gorest.grblcontroller.events.BluetoothDisconnectEvent;
 import in.co.gorest.grblcontroller.events.GrblSettingMessageEvent;
 import in.co.gorest.grblcontroller.events.JogCommandEvent;
@@ -49,11 +59,6 @@ import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.service.FileStreamerIntentService;
 import in.co.gorest.grblcontroller.service.GrblBluetoothSerialService;
 import in.co.gorest.grblcontroller.util.GrblUtils;
-import java.lang.ref.WeakReference;
-import java.util.Objects;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class BluetoothConnectionActivity extends GrblActivity {
 
@@ -277,7 +282,8 @@ public class BluetoothConnectionActivity extends GrblActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            GrblBluetoothSerialService.GrblSerialServiceBinder binder = (GrblBluetoothSerialService.GrblSerialServiceBinder) service;
+            GrblBluetoothSerialService.GrblSerialServiceBinder binder =
+                    (GrblBluetoothSerialService.GrblSerialServiceBinder) service;
             grblBluetoothSerialService = binder.getService();
             mBound = true;
             grblBluetoothSerialService.setMessageHandler(grblServiceMessageHandler);

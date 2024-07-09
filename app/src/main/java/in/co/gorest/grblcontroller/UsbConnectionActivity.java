@@ -38,8 +38,14 @@ import android.os.IBinder;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import in.co.gorest.grblcontroller.events.GrblSettingMessageEvent;
 import in.co.gorest.grblcontroller.events.JogCommandEvent;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
@@ -47,9 +53,6 @@ import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.service.FileStreamerIntentService;
 import in.co.gorest.grblcontroller.service.GrblUsbSerialService;
 import in.co.gorest.grblcontroller.util.GrblUtils;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class UsbConnectionActivity extends GrblActivity {
 
@@ -165,7 +168,8 @@ public class UsbConnectionActivity extends GrblActivity {
     }
 
     /*
-     * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
+     * This handler will be passed to UsbService. Data received from serial port is displayed
+     * through this handler
      */
     private static class GrblServiceMessageHandler extends Handler {
 
@@ -203,7 +207,8 @@ public class UsbConnectionActivity extends GrblActivity {
                     }
                     showToastMessage(getString(R.string.text_usb_device_connected));
                     break;
-                case GrblUsbSerialService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
+                case GrblUsbSerialService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION
+                    // NOT GRANTED
                     if (getSupportActionBar() != null) {
                         getSupportActionBar().setSubtitle(R.string.text_no_usb_permission);
                     }
