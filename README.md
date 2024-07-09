@@ -1,3 +1,22 @@
+# Fork of zeevy/grblcontroller
+
+This fork has few changes that are tailored to my needs (and only tested on my hardware!) and may
+not work for everybody.
+
+### Changes compared to the original version
+
+- made it work on android 34
+- dark theme
+- more probing options (support for a XYZ touch plate and center finding)
+- some drastic UI changes like having the probing on the jogging tab and jogging step quick change
+  buttons
+- removed the cam module (it generated paths that were useless for me and the reuse of the first
+  custom button really makes no sense) - may add a better one in the future
+- the file sender tab now also displays the lower and upper bounds of each axis of a loaded file
+- upon loading a file, a preview image will also be generated to better help visualize the tool path
+
+---
+
 # Grbl Controller
 ### Compact android mobile application for GRBL powered CNC machine.
 
