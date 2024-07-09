@@ -24,57 +24,53 @@ package in.co.gorest.grblcontroller.ui;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TableRow;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.Observable;
-import androidx.databinding.library.baseAdapters.BR;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.tabs.TabLayout;
 import com.joanzapata.iconify.widget.IconButton;
-import com.joanzapata.iconify.widget.IconToggleButton;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.LinkedList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.databinding.FragmentJoggingTabBinding;
-import in.co.gorest.grblcontroller.events.GrblOkEvent;
 import in.co.gorest.grblcontroller.events.JogCommandEvent;
 import in.co.gorest.grblcontroller.events.UiToastEvent;
 import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
-import in.co.gorest.grblcontroller.helpers.RepeatListener;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
 import in.co.gorest.grblcontroller.model.Constants;
 import in.co.gorest.grblcontroller.util.GrblUtils;
 
 public class JoggingTabFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private static final String TAG = JoggingTabFragment.class.getSimpleName();
     private MachineStatusListener machineStatus;
     private EnhancedSharedPreferences sharedPref;
-    private BlockingQueue<Integer> completedCommands;
-    private CustomCommandsAsyncTask customCommandsAsyncTask;
     MaterialButtonToggleGroup stepSelector;
+    ToggleButton continuousButton;
+    Handler continuousJogHandler;
+    String continuousTag;
+    Runnable continuousJogging = new Runnable() {
+        @Override
+        public void run() {
+            sendJogCommand(continuousTag);
+            continuousJogHandler.postDelayed(this, Constants.CONTINUOUS_DELAY);
+        }
+    };
 
     public JoggingTabFragment() {}
 
@@ -88,13 +84,12 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
         machineStatus = MachineStatusListener.getInstance();
         sharedPref = EnhancedSharedPreferences.getInstance(requireActivity().getApplicationContext(), getString(R.string.shared_preference_key));
         sharedPref.registerOnSharedPreferenceChangeListener(this);
-        EventBus.getDefault().register(this);
+        continuousJogHandler = new Handler();
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        SetCustomButtons(requireView());
 
         String joggingPadRotateAngle = sharedPref.getString(getString(R.string.preference_xy_jog_pad_rotation), "0");
         String[] joggingPadTags = rotateJogPad(Integer.parseInt(joggingPadRotateAngle));
@@ -110,7 +105,6 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
     public void onDestroy(){
         super.onDestroy();
         sharedPref.unregisterOnSharedPreferenceChangeListener(this);
-        EventBus.getDefault().unregister(this);
     }
 
     private void updateSteps() {
@@ -147,6 +141,42 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
         binding.setMachineStatus(machineStatus);
         View view = binding.getRoot();
 
+        continuousButton = view.findViewById(R.id.continuous_button);
+
+        TabLayout probingTabLayout = view.findViewById(R.id.probing_tab_layout);
+
+        probingTabLayout.addTab(probingTabLayout.newTab().setText("Macros"));
+        probingTabLayout.addTab(probingTabLayout.newTab().setText(getString(R.string.text_probing_type_straight)));
+        probingTabLayout.addTab(probingTabLayout.newTab().setText(getString(R.string.text_probing_type_tlo)));
+        probingTabLayout.addTab(probingTabLayout.newTab().setText(getString(R.string.text_probing_type_center)));
+
+        probingTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager2 probingViewPager = view.findViewById(R.id.probing_pager);
+        final ProbingAdapter probingAdapter = new ProbingAdapter(getActivity());
+        probingViewPager.setAdapter(probingAdapter);
+        probingViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                probingTabLayout.selectTab(probingTabLayout.getTabAt(position));
+            }
+        });
+
+        probingTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                probingViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
         stepSelector = view.findViewById(R.id.jog_step_selector);
         updateSteps();
         stepSelector.addOnButtonCheckedListener((group, checkedId, checked) -> {
@@ -180,17 +210,34 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                 R.id.jog_y_negative, R.id.jog_x_negative, R.id.jog_z_negative}){
 
             final IconButton iconButton = view.findViewById(resourceId);
-            iconButton.setOnTouchListener(new RepeatListener(false, 300, 35));
+            iconButton.setOnTouchListener((view1, event) -> {
+                if (!continuousButton.isChecked()) {
+                    return false;
+                }
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        continuousTag = iconButton.getTag().toString();
+                        continuousJogHandler.post(continuousJogging);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        continuousJogHandler.removeCallbacks(continuousJogging);
+                        fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils.GRBL_JOG_CANCEL_COMMAND);
+                        return true;
+                }
+                return false;
+            });
 
             iconButton.setOnClickListener(view1 -> {
-                if(isAdded()){
+                if (isAdded() && !continuousButton.isChecked()) {
                     sendJogCommand(iconButton.getTag().toString());
                 }
             });
 
         }
 
-        for(int resourceId: new Integer[]{R.id.jog_cancel, R.id.run_homing_cycle, R.id.goto_x_zero, R.id.goto_y_zero, R.id.goto_z_zero}){
+        for (int resourceId : new Integer[]{R.id.jog_cancel, R.id.run_homing_cycle}) {
             IconButton iconButton = view.findViewById(resourceId);
             iconButton.setOnLongClickListener(this);
         }
@@ -200,71 +247,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
             iconButton.setOnClickListener(this);
         }
 
-        TableRow resetZeroLayout = view.findViewById(R.id.reset_zero_layout);
-        for(int i=0; i<resetZeroLayout.getChildCount(); i++){
-            View resetZeroLayoutView = resetZeroLayout.getChildAt(i);
-            if(resetZeroLayoutView instanceof IconButton || resetZeroLayoutView instanceof IconToggleButton){
-                resetZeroLayoutView.setOnClickListener(view12 -> {
-                    final String tag = view12.getTag().toString();
-
-                    if(tag.equals(GrblUtils.GRBL_KILL_ALARM_LOCK_COMMAND)){
-                        if(!machineStatus.getState().equals(Constants.MACHINE_STATUS_RUN)){
-                            fragmentInteractionListener.onGcodeCommandReceived(tag);
-                        }
-                        return;
-                    }
-
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(getString(R.string.text_zero_selected_axis))
-                            .setMessage(getString(R.string.text_set_axis_location_in_current_wpos) + tag)
-                            .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> sendCommandIfIdle(tag))
-                            .setNegativeButton(getString(R.string.text_no_confirm), null)
-                            .show();
-                });
-            }
-        }
-
-        TableRow wposLayout = view.findViewById(R.id.wpos_layout);
-        for(int i=0; i<wposLayout.getChildCount(); i++){
-            View wposLayoutView = wposLayout.getChildAt(i);
-            if(wposLayoutView instanceof Button){
-                wposLayoutView.setOnClickListener(view13 -> {
-                    if(machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)){
-                        sendCommandIfIdle(view13.getTag().toString());
-                        sendCommandIfIdle(GrblUtils.GRBL_VIEW_PARSER_STATE_COMMAND);
-                        EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_selected_coordinate_system) + view13.getTag().toString()));
-                    }else{
-                        EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_machine_not_idle), true, true));
-                    }
-                });
-                wposLayoutView.setOnLongClickListener(this);
-            }
-        }
-
         return view;
-    }
-
-    private void SetCustomButtons(View view){
-        TableRow customButtonLayout = view.findViewById(R.id.custom_button_layout);
-        if(customButtonLayout == null) return;
-
-        if(sharedPref.getBoolean(getString(R.string.preference_enable_custom_buttons), false)){
-            customButtonLayout.setVisibility(View.VISIBLE);
-
-            for(int resourceId: new Integer[]{R.id.custom_button_1, R.id.custom_button_2, R.id.custom_button_3, R.id.custom_button_4}){
-                IconButton iconButton = view.findViewById(resourceId);
-
-                if(resourceId == R.id.custom_button_1) iconButton.setText(sharedPref.getString(getString(R.string.preference_custom_button_one), getString(R.string.text_value_na)));
-                if(resourceId == R.id.custom_button_2) iconButton.setText(sharedPref.getString(getString(R.string.preference_custom_button_two), getString(R.string.text_value_na)));
-                if(resourceId == R.id.custom_button_3) iconButton.setText(sharedPref.getString(getString(R.string.preference_custom_button_three), getString(R.string.text_value_na)));
-                if(resourceId == R.id.custom_button_4) iconButton.setText(sharedPref.getString(getString(R.string.preference_custom_button_four), getString(R.string.text_value_na)));
-
-                iconButton.setOnLongClickListener(this);
-                iconButton.setOnClickListener(this);
-            }
-        }else{
-            customButtonLayout.setVisibility(View.GONE);
-        }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -291,12 +274,11 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                 fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils.GRBL_JOG_CANCEL_COMMAND);
             }
 
+            /*TODO: implement a way to stop custom command
             if (customCommandsAsyncTask != null && customCommandsAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
                 customCommandsAsyncTask.cancel(true);
                 fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
-            }
-        } else if(id == R.id.custom_button_1 || id == R.id.custom_button_2 || id == R.id.custom_button_3 ||id == R.id.custom_button_4) {
-            customButton(id, false);
+            }*/
         }
     }
 
@@ -326,168 +308,9 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                     .setNegativeButton(getString(R.string.text_no_confirm), null)
                     .show();
             return true;
-        } else if (id == R.id.wpos_g54 || id == R.id.wpos_g55 || id == R.id.wpos_g56 || id == R.id.wpos_g57) {
-            saveWPos((Button) view);
-            return true;
-        } else if (id == R.id.goto_x_zero) {
-            gotoAxisZero("X");
-            return true;
-        } else if (id == R.id.goto_y_zero) {
-            gotoAxisZero("Y");
-            return true;
-        } else if (id == R.id.goto_z_zero) {
-            gotoAxisZero("Z");
-            return true;
-        } else if (id == R.id.custom_button_1 || id == R.id.custom_button_2 || id == R.id.custom_button_3 || id == R.id.custom_button_4) {
-            customButton(id, true);
-            return true;
         }
 
         return false;
-    }
-
-    private void customButton(int resourceId, boolean isLongClick){
-
-        if(!machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)){
-            EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_machine_not_idle), true, true));
-            return;
-        }
-
-        String title = "";
-        String commands = "";
-        boolean confirmFirst = true;
-
-        if(resourceId == R.id.custom_button_1){
-            title = sharedPref.getString(getString(R.string.preference_custom_button_one), getString(R.string.text_value_na));
-            commands = isLongClick ? sharedPref.getString(getString(R.string.preference_custom_button_one_long_click), "") : sharedPref.getString(getString(R.string.preference_custom_button_one_short_click), "");
-            confirmFirst = sharedPref.getBoolean(getString(R.string.preference_custom_button_one_confirm), true);
-        }
-
-        if(resourceId == R.id.custom_button_2){
-            title = sharedPref.getString(getString(R.string.preference_custom_button_two), getString(R.string.text_value_na));
-            commands = isLongClick ? sharedPref.getString(getString(R.string.preference_custom_button_two_long_click), "") : sharedPref.getString(getString(R.string.preference_custom_button_two_short_click), "");
-            confirmFirst = sharedPref.getBoolean(getString(R.string.preference_custom_button_two_confirm), true);
-        }
-
-        if(resourceId == R.id.custom_button_3){
-            title = sharedPref.getString(getString(R.string.preference_custom_button_three), getString(R.string.text_value_na));
-            commands = isLongClick ? sharedPref.getString(getString(R.string.preference_custom_button_three_long_click), "") : sharedPref.getString(getString(R.string.preference_custom_button_three_short_click), "");
-            confirmFirst = sharedPref.getBoolean(getString(R.string.preference_custom_button_three_confirm), true);
-        }
-
-        if(resourceId == R.id.custom_button_4){
-            title = sharedPref.getString(getString(R.string.preference_custom_button_four), getString(R.string.text_value_na));
-            commands = isLongClick ? sharedPref.getString(getString(R.string.preference_custom_button_four_long_click), "") : sharedPref.getString(getString(R.string.preference_custom_button_four_short_click), "");
-            confirmFirst = sharedPref.getBoolean(getString(R.string.preference_custom_button_four_confirm), true);
-        }
-
-        if(commands.trim().length() <= 0){
-            EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_empty_command), true, true));
-            return;
-        }
-
-        final String finalCommands = commands;
-
-        if(confirmFirst){
-            String alertSummary = isLongClick ? getString(R.string.text_long_click) : getString(R.string.text_short_click);
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(getString(R.string.text_custom_action) + title)
-                    .setMessage(getString(R.string.text_send_custom_command) + alertSummary + getString(R.string.text_on_button) + title)
-                    .setPositiveButton(getString(R.string.text_send), (dialog, which) -> {
-                        customCommandsAsyncTask = new CustomCommandsAsyncTask();
-                        customCommandsAsyncTask.execute(finalCommands);
-                    })
-                    .setNegativeButton(getString(R.string.text_cancel), null)
-                    .show();
-        }else{
-            customCommandsAsyncTask = new CustomCommandsAsyncTask();
-            customCommandsAsyncTask.execute(finalCommands);
-        }
-
-    }
-
-    private class CustomCommandsAsyncTask extends AsyncTask<String, Integer, Integer>{
-
-        private int MAX_RX_SERIAL_BUFFER = Constants.DEFAULT_SERIAL_RX_BUFFER - 3;
-        private int CURRENT_RX_SERIAL_BUFFER;
-        private LinkedList<Integer> activeCommandSizes;
-
-        protected void onPreExecute(){
-            MachineStatusListener.CompileTimeOptions compileTimeOptions = MachineStatusListener.getInstance().getCompileTimeOptions();
-            if(compileTimeOptions.serialRxBuffer > 0) MAX_RX_SERIAL_BUFFER = compileTimeOptions.serialRxBuffer - 3;
-
-            completedCommands = new ArrayBlockingQueue<>(Constants.DEFAULT_SERIAL_RX_BUFFER);
-            activeCommandSizes = new LinkedList<>();
-            CURRENT_RX_SERIAL_BUFFER = 0;
-        }
-
-        protected Integer doInBackground(String... commands){
-
-            String[] lines = commands[0].split("[\r\n]+");
-            for(String command: lines){
-                if(isCancelled()) break;
-                streamLine(command);
-            }
-
-            return 1;
-        }
-
-        private void streamLine(String gcodeCommand){
-
-            int commandSize = gcodeCommand.length() + 1;
-
-            // Wait until there is room, if necessary.
-            while (MAX_RX_SERIAL_BUFFER < (CURRENT_RX_SERIAL_BUFFER + commandSize)) {
-                try {
-                    completedCommands.take();
-                    if(activeCommandSizes.size() > 0) CURRENT_RX_SERIAL_BUFFER -= activeCommandSizes.removeFirst();
-                } catch (InterruptedException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                    return;
-                }
-            }
-
-            activeCommandSizes.offer(commandSize);
-            CURRENT_RX_SERIAL_BUFFER += commandSize;
-            fragmentInteractionListener.onGcodeCommandReceived(gcodeCommand);
-        }
-
-    }
-
-    private void gotoAxisZero(final String axis){
-        new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.text_move) + axis + getString(R.string.text_axis_to_zero_position))
-                .setMessage(getString(R.string.text_go_to_zero_position) + axis + "0")
-                .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> sendCommandIfIdle("G0 " + axis + "0"))
-                .setNegativeButton(getString(R.string.text_no_confirm), null)
-                .show();
-    }
-
-    private void saveWPos(Button button){
-        String wpos = button.getTag().toString();
-        final String slot;
-
-        switch (wpos){
-            case "G54":
-                slot = "P1";
-                break;
-            case "G56":
-                slot = "P3";
-                break;
-            case "G57":
-                slot = "P4";
-                break;
-            default:
-//              //G55
-                slot = "P2";
-        }
-
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.text_save_coordinate_system)
-                .setMessage(getString(R.string.text_save_coordinate_system_desc) + " " + wpos + "?")
-                .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> sendCommandIfIdle(String.format("G10 L20 %s X0Y0Z0", slot)))
-                .setNegativeButton(getString(R.string.text_no_confirm), null)
-                .show();
     }
 
     private void sendJogCommand(String tag){
@@ -502,9 +325,11 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
             }
 
             Double stepSize;
-            if(tag.toUpperCase().contains("Z")){
+            if (continuousButton.isChecked()) {
+                stepSize = Constants.CONTINUOUS_STEP_SIZE;
+            } else if (tag.toUpperCase().contains("Z")) {
                 stepSize = machineStatus.getJogging().stepZ;
-            }else{
+            } else {
                 stepSize = machineStatus.getJogging().stepXY;
             }
 
@@ -749,13 +574,4 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
             EventBus.getDefault().post(new UiToastEvent(getString(R.string.text_machine_not_idle), true, true));
         }
     }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onGrblOkEvent(GrblOkEvent event){
-        if(customCommandsAsyncTask != null && customCommandsAsyncTask.getStatus() == AsyncTask.Status.RUNNING){
-            completedCommands.offer(1);
-        }
-    }
-
-
 }

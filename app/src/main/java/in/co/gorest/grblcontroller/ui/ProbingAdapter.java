@@ -15,16 +15,18 @@ public class ProbingAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 1:
-                return ProbingTloFragment.newInstance();
+                return ProbingBasicFragment.newInstance();
             case 2:
+                return ProbingTloFragment.newInstance();
+            case 3:
                 return ProbingCenterFragment.newInstance();
             default:
-                return ProbingBasicFragment.newInstance();
+                return MacrosFragment.newInstance();
         }
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 }

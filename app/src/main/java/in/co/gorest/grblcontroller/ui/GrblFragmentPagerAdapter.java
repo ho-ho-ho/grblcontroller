@@ -44,8 +44,6 @@ public class GrblFragmentPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return FileSenderTabFragment.newInstance();
             case 2:
-                return ProbingTabFragment.newInstance();
-            case 3:
                 return ConsoleTabFragment.newInstance();
             default:
                 return JoggingTabFragment.newInstance();

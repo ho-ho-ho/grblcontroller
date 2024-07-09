@@ -124,7 +124,6 @@ public class BluetoothConnectionActivity extends GrblActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        onGcodeCommandReceived("$10=1");
         if(mBound){
             grblBluetoothSerialService.setMessageHandler(null);
             unbindService(serviceConnection);
@@ -197,7 +196,6 @@ public class BluetoothConnectionActivity extends GrblActivity {
                                 .setTitle(R.string.text_disconnect)
                                 .setMessage(getString(R.string.text_disconnect_confirm))
                                 .setPositiveButton(getString(R.string.text_yes_confirm), (dialog, which) -> {
-                                    onGcodeCommandReceived("$10=1");
                                     if (grblBluetoothSerialService != null)
                                         grblBluetoothSerialService.disconnectService();
                                 })
@@ -323,10 +321,6 @@ public class BluetoothConnectionActivity extends GrblActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGrblSettingMessageEvent(GrblSettingMessageEvent event){
-
-        if(event.getSetting().equals("$10") && !event.getValue().equals("2")){
-            onGcodeCommandReceived("$10=2");
-        }
 
         if(event.getSetting().equals("$110") || event.getSetting().equals("$111") || event.getSetting().equals("$112")){
             double maxFeedRate = Double.parseDouble(event.getValue());

@@ -29,7 +29,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="4dp">
 
         <RelativeLayout
             android:id="@+id/probe_outside_view"
@@ -124,7 +125,7 @@
 
         <Button
             android:id="@+id/probe_center_apply_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="@{(machineStatus.state.equals(machineStatus.STATE_IDLE)) &amp;&amp; ((posLeft != Double.MAX_VALUE &amp;&amp; posRight != Double.MAX_VALUE) || (posBack != Double.MAX_VALUE &amp;&amp; posFront != Double.MAX_VALUE))}"
             android:text="@string/text_probing_center_apply" />
