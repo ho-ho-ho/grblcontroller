@@ -146,6 +146,7 @@ public class UsbConnectionActivity extends GrblActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void setFilters() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(GrblUsbSerialService.ACTION_USB_PERMISSION_GRANTED);
@@ -153,7 +154,11 @@ public class UsbConnectionActivity extends GrblActivity{
         filter.addAction(GrblUsbSerialService.ACTION_USB_DISCONNECTED);
         filter.addAction(GrblUsbSerialService.ACTION_USB_NOT_SUPPORTED);
         filter.addAction(GrblUsbSerialService.ACTION_USB_PERMISSION_NOT_GRANTED);
-        registerReceiver(mUsbReceiver, filter, RECEIVER_NOT_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mUsbReceiver, filter, RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mUsbReceiver, filter);
+        }
     }
 
     /*
@@ -257,10 +262,6 @@ public class UsbConnectionActivity extends GrblActivity{
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGrblSettingMessageEvent(GrblSettingMessageEvent event){
-
-        if (event.getSetting().equals("$10") && !event.getValue().equals("138")) {
-            onGcodeCommandReceived("$10=138");
-        }
 
         if(event.getSetting().equals("$110") || event.getSetting().equals("$111") || event.getSetting().equals("$112")){
             double maxFeedRate = Double.parseDouble(event.getValue());
