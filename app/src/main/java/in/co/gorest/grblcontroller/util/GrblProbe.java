@@ -1,8 +1,8 @@
 package in.co.gorest.grblcontroller.util;
 
 import android.content.Context;
+import android.util.Pair;
 
-import androidx.core.util.Pair;
 import androidx.databinding.ObservableDouble;
 
 import org.greenrobot.eventbus.EventBus;
@@ -10,6 +10,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import in.co.gorest.grblcontroller.GrblController;
 import in.co.gorest.grblcontroller.R;
@@ -23,93 +24,21 @@ import in.co.gorest.grblcontroller.ui.BaseFragment;
 // handles different scenarios for probing work
 public class GrblProbe {
 
-    public enum ProbeType {Straight, ToolLengthOffset, Center}
-
-    public enum Axis {X, Y, Z}
-
-    public enum Direction {
-        Minus, Plus;
-
-        public boolean isPositive() {
-            return this == Plus;
-        }
-    }
-
-    public enum CenterDirection {Inside, Outside}
-
-    public static class Configuration {
-
-        protected final ProbeType type;
-        protected final LinkedList<Pair<Axis, Direction>> axes;
-        protected final CenterDirection centerDir;
-        protected final boolean zeroZ;
-        protected final boolean referenceZ;
-
-        Configuration(Builder builder) {
-            type = builder.type;
-            axes = builder.axes;
-            centerDir = builder.centerDir;
-            zeroZ = builder.zeroZ;
-            referenceZ = builder.referenceZ;
-        }
-
-        public static class Builder {
-
-            private ProbeType type = null;
-            private final LinkedList<Pair<Axis, Direction>> axes = new LinkedList<>();
-            private CenterDirection centerDir = null;
-            private boolean zeroZ = false;
-            private boolean referenceZ = false;
-
-            public Builder type(ProbeType probeType) {
-                type = probeType;
-                return this;
-            }
-
-            public Builder addAxisDir(Axis axis, Direction dir) {
-                axes.add(new Pair<>(axis, dir));
-                return this;
-            }
-
-            public Builder centerDirection(CenterDirection centerDirection) {
-                centerDir = centerDirection;
-                return this;
-            }
-
-            public Builder zeroZ(boolean zero) {
-                zeroZ = zero;
-                return this;
-            }
-
-            public Builder referenceZ(boolean reference) {
-                referenceZ = reference;
-                return this;
-            }
-
-            public Configuration build() {
-                return new Configuration(this);
-            }
-        }
-    }
-
     private static GrblProbe grblProbe = null;
-
     private final BaseFragment.OnFragmentInteractionListener grblHandler;
     private final EnhancedSharedPreferences sharedPref;
     private final MachineStatusListener machineStatus;
-
+    private final ObservableDouble referenceZValue = new ObservableDouble(Double.MAX_VALUE);
+    private final ObservableDouble centerPosLeft = new ObservableDouble(Double.MAX_VALUE);
+    private final ObservableDouble centerPosRight = new ObservableDouble(Double.MAX_VALUE);
+    private final ObservableDouble centerPosBack = new ObservableDouble(Double.MAX_VALUE);
+    private final ObservableDouble centerPosFront = new ObservableDouble(Double.MAX_VALUE);
     // state variables
     private boolean isRunning = false;
     private Configuration stateConfig;
     private Position startPosition = null;
     private String distanceMode;
     private String unitSelection;
-
-    private final ObservableDouble referenceZValue = new ObservableDouble(Double.MAX_VALUE);
-    private final ObservableDouble centerPosLeft = new ObservableDouble(Double.MAX_VALUE);
-    private final ObservableDouble centerPosRight = new ObservableDouble(Double.MAX_VALUE);
-    private final ObservableDouble centerPosBack = new ObservableDouble(Double.MAX_VALUE);
-    private final ObservableDouble centerPosFront = new ObservableDouble(Double.MAX_VALUE);
 
     private GrblProbe(BaseFragment.OnFragmentInteractionListener handler,
             EnhancedSharedPreferences enhancedSharedPreferences) {
@@ -151,6 +80,13 @@ public class GrblProbe {
 
     public ObservableDouble getCenterPosFront() {
         return centerPosFront;
+    }
+
+    public void clearCenterPositions() {
+        centerPosLeft.set(Double.MAX_VALUE);
+        centerPosRight.set(Double.MAX_VALUE);
+        centerPosBack.set(Double.MAX_VALUE);
+        centerPosFront.set(Double.MAX_VALUE);
     }
 
     // since we don't have access to the context here, we'll use the GrblController instance to
@@ -334,6 +270,7 @@ public class GrblProbe {
         } else {
             if (stateConfig.referenceZ) {
                 referenceZValue.set(probedPosition);
+                grblHandler.onGcodeCommandReceived("$TLR"); /// set grblHAL tool reference
                 EventBus.getDefault().post(new UiToastEvent(GrblController.getInstance()
                         .getString(R.string.text_probing_tlo_probe_reference_success)));
             } else {
@@ -429,5 +366,79 @@ public class GrblProbe {
         stateMachine();
 
         machineStatus.setLastProbePosition(event.getProbePosition());
+    }
+
+    public enum ProbeType {Straight, ToolLengthOffset, Center}
+
+    public enum Axis {X, Y, Z}
+
+    public enum Direction {
+        Minus, Plus;
+
+        public boolean isPositive() {
+            return this == Plus;
+        }
+    }
+
+    public enum CenterDirection {Inside, Outside}
+
+    public static class Configuration {
+
+        protected final ProbeType type;
+        protected final LinkedList<Pair<Axis, Direction>> axes;
+        protected final CenterDirection centerDir;
+        protected final boolean zeroZ;
+        protected final boolean referenceZ;
+
+        Configuration(Builder builder) {
+            type = builder.type;
+            axes = builder.axes;
+            centerDir = builder.centerDir;
+            zeroZ = builder.zeroZ;
+            referenceZ = builder.referenceZ;
+        }
+
+        public static class Builder {
+
+            private final LinkedList<Pair<Axis, Direction>> axes = new LinkedList<>();
+            private ProbeType type = null;
+            private CenterDirection centerDir = null;
+            private boolean zeroZ = false;
+            private boolean referenceZ = false;
+
+            public Builder type(ProbeType probeType) {
+                type = probeType;
+                return this;
+            }
+
+            public Builder addAxisDirs(List<Pair<Axis, Direction>> axisDirs) {
+                this.axes.addAll(axisDirs);
+                return this;
+            }
+
+            public Builder addAxisDir(Axis axis, Direction dir) {
+                axes.add(new Pair<>(axis, dir));
+                return this;
+            }
+
+            public Builder centerDirection(CenterDirection centerDirection) {
+                centerDir = centerDirection;
+                return this;
+            }
+
+            public Builder zeroZ(boolean zero) {
+                zeroZ = zero;
+                return this;
+            }
+
+            public Builder referenceZ(boolean reference) {
+                referenceZ = reference;
+                return this;
+            }
+
+            public Configuration build() {
+                return new Configuration(this);
+            }
+        }
     }
 }

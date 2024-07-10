@@ -2,18 +2,19 @@ package in.co.gorest.grblcontroller.ui;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.databinding.DataBindingUtil;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import in.co.gorest.grblcontroller.GrblActivity;
 import in.co.gorest.grblcontroller.R;
@@ -28,11 +29,6 @@ public class ProbingBasicFragment extends BaseFragment {
 
     private MachineStatusListener machineStatus;
     private GrblProbe grblProbe;
-
-    private RadioGroup probeXLocation;
-    private RadioGroup probeYLocation;
-    private SwitchCompat probeZSwitch;
-    private SwitchCompat autoZeroAfterProbe;
 
     public ProbingBasicFragment() {
     }
@@ -62,24 +58,45 @@ public class ProbingBasicFragment extends BaseFragment {
         binding.setMachineStatus(machineStatus);
         View view = binding.getRoot();
 
-        probeXLocation = view.findViewById(R.id.probe_x_location);
-        probeYLocation = view.findViewById(R.id.probe_y_location);
-        probeZSwitch = view.findViewById(R.id.probe_z);
-        autoZeroAfterProbe = view.findViewById(R.id.auto_zero_after_probe);
+        for (int resourceId : new Integer[]{R.id.probing_basic_back_left_button,
+                R.id.probing_basic_back_button, R.id.probing_basic_back_right_button,
+                R.id.probing_basic_left_button, R.id.probing_basic_z_button,
+                R.id.probing_basic_right_button, R.id.probing_basic_front_left_button,
+                R.id.probing_basic_front_button, R.id.probing_basic_front_right_button}) {
+            Button btn = view.findViewById(resourceId);
 
-        Button startProbe = view.findViewById(R.id.start_probe);
-        startProbe.setOnClickListener(view12 -> new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.text_straight_probe))
-                .setMessage(getString(R.string.text_straight_probe_desc))
-                .setPositiveButton(getString(R.string.text_yes_confirm),
-                        (dialog, which) -> startProbing())
-                .setNegativeButton(getString(R.string.text_cancel), null)
-                .show());
+            LinkedList<Pair<GrblProbe.Axis, GrblProbe.Direction>> axisDirs = new LinkedList<>();
+            if (resourceId == R.id.probing_basic_z_button) {
+                axisDirs.add(new Pair<>(GrblProbe.Axis.Z, GrblProbe.Direction.Minus));
+            } else {
+                if (resourceId == R.id.probing_basic_back_left_button
+                        || resourceId == R.id.probing_basic_left_button
+                        || resourceId == R.id.probing_basic_front_left_button) {
+                    axisDirs.add(new Pair<>(GrblProbe.Axis.X, GrblProbe.Direction.Minus));
+                } else if (resourceId == R.id.probing_basic_back_right_button
+                        || resourceId == R.id.probing_basic_right_button
+                        || resourceId == R.id.probing_basic_front_right_button) {
+                    axisDirs.add(new Pair<>(GrblProbe.Axis.X, GrblProbe.Direction.Plus));
+                }
+
+                if (resourceId == R.id.probing_basic_front_left_button
+                        || resourceId == R.id.probing_basic_front_button
+                        || resourceId == R.id.probing_basic_front_right_button) {
+                    axisDirs.add(new Pair<>(GrblProbe.Axis.Y, GrblProbe.Direction.Minus));
+                } else if (resourceId == R.id.probing_basic_back_left_button
+                        || resourceId == R.id.probing_basic_back_button
+                        || resourceId == R.id.probing_basic_back_right_button) {
+                    axisDirs.add(new Pair<>(GrblProbe.Axis.Y, GrblProbe.Direction.Plus));
+                }
+            }
+
+            btn.setOnClickListener(view12 -> startProbing(axisDirs));
+        }
 
         return view;
     }
 
-    private void startProbing() {
+    private void startProbing(List<Pair<GrblProbe.Axis, GrblProbe.Direction>> axisDirs) {
         if (!machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)) {
             EventBus.getDefault()
                     .post(new UiToastEvent(getString(R.string.text_machine_not_idle), true, true));
@@ -89,39 +106,17 @@ public class ProbingBasicFragment extends BaseFragment {
         fragmentInteractionListener.onGcodeCommandReceived(
                 GrblUtils.GRBL_VIEW_PARSER_STATE_COMMAND);
 
-        GrblProbe.Direction xAxisDir = null;
-        GrblProbe.Direction yAxisDir = null;
-
-        int xLocation = probeXLocation.getCheckedRadioButtonId();
-        if (xLocation == R.id.probe_x_left) {
-            xAxisDir = GrblProbe.Direction.Minus;
-        } else if (xLocation == R.id.probe_x_right) {
-            xAxisDir = GrblProbe.Direction.Plus;
-        }
-
-        int yLocation = probeYLocation.getCheckedRadioButtonId();
-        if (yLocation == R.id.probe_y_front) {
-            yAxisDir = GrblProbe.Direction.Minus;
-        } else if (yLocation == R.id.probe_y_back) {
-            yAxisDir = GrblProbe.Direction.Plus;
-        }
-
         GrblProbe.Configuration.Builder builder = new GrblProbe.Configuration.Builder()
                 .type(GrblProbe.ProbeType.Straight)
-                .zeroZ(autoZeroAfterProbe.isChecked());
+                .addAxisDirs(axisDirs)
+                .zeroZ(true);
 
-        if (xAxisDir != null) {
-            builder.addAxisDir(GrblProbe.Axis.X, xAxisDir);
-        }
-        if (yAxisDir != null) {
-            builder.addAxisDir(GrblProbe.Axis.Y, yAxisDir);
-        }
-        if (probeZSwitch.isChecked()) {
-            builder.addAxisDir(GrblProbe.Axis.Z, GrblProbe.Direction.Minus);
-        }
-
-        // Wait for few milliseconds, just to make sure we got the parser state
-        new Handler().postDelayed(() -> grblProbe.probe(builder.build()),
-                (Constants.GRBL_STATUS_UPDATE_INTERVAL + 100));
+        new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.text_straight_probe))
+                .setMessage(getString(R.string.text_straight_probe_desc))
+                .setPositiveButton(getString(R.string.text_yes_confirm),
+                        (dialog, which) -> grblProbe.probe(builder.build()))
+                .setNegativeButton(getString(R.string.text_cancel), null)
+                .show();
     }
 }

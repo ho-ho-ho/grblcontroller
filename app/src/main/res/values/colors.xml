@@ -8,4 +8,5 @@
     <color name="colorWhite">#ffffff</color>
     <color name="colorDivider">#bdbdbd</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorTextGray">#bebebe</color>
 </resources>

@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
@@ -41,7 +42,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.tabs.TabLayout;
-import com.joanzapata.iconify.widget.IconButton;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
@@ -104,7 +104,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                 R.id.jog_xy_top_right, R.id.jog_x_negative, R.id.jog_x_positive,
                 R.id.jog_xy_bottom_left,
                 R.id.jog_y_negative, R.id.jog_xy_bottom_right}) {
-            final IconButton jogButton = requireView().findViewById(resourceId);
+            final Button jogButton = requireView().findViewById(resourceId);
             jogButton.setTag(joggingPadTags[jogPadIndex]);
             jogPadIndex++;
         }
@@ -250,7 +250,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                 R.id.jog_xy_bottom_right,
                 R.id.jog_y_negative, R.id.jog_x_negative, R.id.jog_z_negative}) {
 
-            final IconButton iconButton = view.findViewById(resourceId);
+            final Button iconButton = view.findViewById(resourceId);
             iconButton.setOnTouchListener((view1, event) -> {
                 if (!continuousButton.isChecked()) {
                     return false;
@@ -280,12 +280,12 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
         }
 
         for (int resourceId : new Integer[]{R.id.jog_cancel, R.id.run_homing_cycle}) {
-            IconButton iconButton = view.findViewById(resourceId);
+            Button iconButton = view.findViewById(resourceId);
             iconButton.setOnLongClickListener(this);
         }
 
         for (int resourceId : new Integer[]{R.id.run_homing_cycle, R.id.jog_cancel}) {
-            IconButton iconButton = view.findViewById(resourceId);
+            Button iconButton = view.findViewById(resourceId);
             iconButton.setOnClickListener(this);
         }
 
@@ -409,7 +409,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
 
         for (final int resourceId : new Integer[]{R.id.jog_xy_step_small, R.id.jog_xy_step_medium,
                 R.id.jog_xy_step_high}) {
-            final IconButton iconButton = view.findViewById(resourceId);
+            final Button iconButton = view.findViewById(resourceId);
 
             iconButton.setOnLongClickListener(v -> {
                 new AlertDialog.Builder(getActivity())
@@ -502,7 +502,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
 
         for (final int resourceId : new Integer[]{R.id.jog_z_step_small, R.id.jog_z_step_medium,
                 R.id.jog_z_step_high}) {
-            final IconButton iconButton = view.findViewById(resourceId);
+            final Button iconButton = view.findViewById(resourceId);
 
             iconButton.setOnLongClickListener(v -> {
 

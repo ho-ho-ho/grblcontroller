@@ -1,8 +1,8 @@
 package in.co.gorest.grblcontroller.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +65,7 @@ public class ProbingCenterFragment extends BaseFragment {
         View view = binding.getRoot();
 
         outsideBtn = view.findViewById(R.id.probing_center_outside_btn);
+        outsideBtn.setOnClickListener(view1 -> grblProbe.clearCenterPositions());
         Button leftBtn = view.findViewById(R.id.probe_center_x_left_btn);
         leftBtn.setOnClickListener(
                 view1 -> startProbing(GrblProbe.Axis.X, GrblProbe.Direction.Minus));
@@ -135,8 +136,12 @@ public class ProbingCenterFragment extends BaseFragment {
                         : GrblProbe.CenterDirection.Inside)
                 .addAxisDir(axis, dir);
 
-        // Wait for few milliseconds, just to make sure we got the parser state
-        new Handler().postDelayed(() -> grblProbe.probe(builder.build()),
-                (Constants.GRBL_STATUS_UPDATE_INTERVAL + 100));
+        new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.text_probing_center))
+                .setMessage(getString(R.string.text_straight_probe_desc))
+                .setPositiveButton(getString(R.string.text_yes_confirm),
+                        (dialog, which) -> grblProbe.probe(builder.build()))
+                .setNegativeButton(getString(R.string.text_cancel), null)
+                .show();
     }
 }

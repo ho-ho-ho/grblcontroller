@@ -1,5 +1,6 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -15,92 +16,87 @@
         android:rowCount="2"
         android:useDefaultMargins="true">
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
+            style="@style/IconOnlyButton"
             android:id="@+id/alarm_button"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-            android:gravity="center"
             android:tag="$X"
-            android:text='@{machineStatus.state.equals(machineStatus.STATE_ALARM) ? "{fa-bell 18dp @color/colorPrimary}" : "{fa-bell-slash-o 18dp}"}'
+            app:icon="@{machineStatus.state.equals(machineStatus.STATE_ALARM) ? @drawable/baseline_lock_24 : @drawable/baseline_lock_open_24}"
             tools:ignore="SpeakableTextPresentCheck" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/goto_x_zero"
-            android:text="X {fa-dot-circle-o 18dp}"
+            android:text="X"
+            app:icon="@drawable/outline_gps_fixed_24"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
             android:tag="G10 L20 P0 X0"
             android:gravity="center"
             tools:ignore="HardcodedText" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/goto_y_zero"
-            android:text="Y {fa-dot-circle-o 18dp}"
+            android:text="Y"
+            app:icon="@drawable/outline_gps_fixed_24"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
             android:tag="G10 L20 P0 Y0"
             android:gravity="center"
             tools:ignore="HardcodedText" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/goto_z_zero"
-            android:text="Z {fa-dot-circle-o 18dp}"
+            android:text="Z"
+            app:icon="@drawable/outline_gps_fixed_24"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
             android:tag="G10 L20 P0 Z0"
             android:gravity="center"
             tools:ignore="HardcodedText" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/wpos_g54"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
             android:tag="G54"
             android:text="G54"
-            android:gravity="center"
             tools:ignore="HardcodedText" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
             android:id="@+id/wpos_g55"
             android:tag="G55"
             android:text="G55"
-            android:gravity="center"
             tools:ignore="HardcodedText" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
             android:id="@+id/wpos_g56"
             android:tag="G56"
             android:text="G56"
-            android:gravity="center"
             tools:ignore="HardcodedText" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
             android:id="@+id/wpos_g57"
             android:tag="G57"
             android:text="G57"
-            android:gravity="center"
             tools:ignore="HardcodedText" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/custom_button_1"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-            android:text="@string/text_value_na"
-            android:gravity="center" />
+            android:text="@string/text_value_na" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/custom_button_2"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-            android:text="@string/text_value_na"
-            android:gravity="center" />
+            android:text="@string/text_value_na" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/custom_button_3"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-            android:text="@string/text_value_na"
-            android:gravity="center" />
+            android:text="@string/text_value_na" />
 
-        <com.joanzapata.iconify.widget.IconButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/custom_button_4"
             android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-            android:text="@string/text_value_na"
-            android:gravity="center" />
+            android:text="@string/text_value_na" />
     </GridLayout>
 </layout>

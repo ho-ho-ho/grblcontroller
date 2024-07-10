@@ -1,5 +1,5 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -32,21 +32,55 @@
         android:orientation="vertical"
         android:padding="4dp">
 
-        <RelativeLayout
-            android:id="@+id/probe_outside_view"
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:padding="4dp"
-            tools:ignore="UnusedAttribute">
+            android:columnCount="3"
+            android:rowCount="3"
+            android:useDefaultMargins="true">
 
-            <TextView
-                android:layout_width="match_parent"
+            <Space />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/probe_center_y_back_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/text_probing_center" />
+                android:checked="@{posBack != Double.MAX_VALUE}"
+                app:icon="@{posBack != Double.MAX_VALUE ? @drawable/baseline_check_24 : null}"
+                android:text="@string/text_probing_y_location_back" />
 
-        </RelativeLayout>
+            <Space />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/probe_center_x_left_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@{posLeft != Double.MAX_VALUE ? @drawable/baseline_check_24 : null}"
+                android:text="@string/text_probing_x_location_left" />
+
+            <Space />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/probe_center_x_right_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@{posRight != Double.MAX_VALUE ? @drawable/baseline_check_24 : null}"
+                android:text="@string/text_probing_x_location_right" />
+
+            <Space />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/probe_center_y_front_btn"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@{posFront != Double.MAX_VALUE ? @drawable/baseline_check_24 : null}"
+                android:text="@string/text_probing_y_location_front" />
+
+        </GridLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -54,81 +88,27 @@
             android:layout_margin="4dp"
             android:background="@color/colorDivider" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="4dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="8dp"
-                android:text="@string/text_probing_center_probe_from" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <ToggleButton
                 android:id="@+id/probing_center_outside_btn"
                 android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:checked="true"
                 android:textOff="@string/text_probing_center_inside"
                 android:textOn="@string/text_probing_center_outside"
+                android:layout_alignParentStart="true"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:rowCount="3">
-
-            <Space />
+                android:layout_height="wrap_content" />
 
             <Button
-                android:id="@+id/probe_center_y_back_btn"
-                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:id="@+id/probe_center_apply_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@{posBack != Double.MAX_VALUE ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
-                android:text="@string/text_probing_y_location_back" />
-
-            <Space />
-
-            <Button
-                android:id="@+id/probe_center_x_left_btn"
-                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@{posLeft != Double.MAX_VALUE ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
-                android:text="@string/text_probing_x_location_left" />
-
-            <Space />
-
-            <Button
-                android:id="@+id/probe_center_x_right_btn"
-                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@{posRight != Double.MAX_VALUE ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
-                android:text="@string/text_probing_x_location_right" />
-
-            <Space />
-
-            <Button
-                android:id="@+id/probe_center_y_front_btn"
-                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@{posFront != Double.MAX_VALUE ? @android:drawable/checkbox_on_background : @android:drawable/checkbox_off_background}"
-                android:text="@string/text_probing_y_location_front" />
-
-        </GridLayout>
-
-        <Button
-            android:id="@+id/probe_center_apply_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="@{(machineStatus.state.equals(machineStatus.STATE_IDLE)) &amp;&amp; ((posLeft != Double.MAX_VALUE &amp;&amp; posRight != Double.MAX_VALUE) || (posBack != Double.MAX_VALUE &amp;&amp; posFront != Double.MAX_VALUE))}"
-            android:text="@string/text_probing_center_apply" />
-
+                android:layout_alignParentEnd="true"
+                android:enabled="@{(machineStatus.state.equals(machineStatus.STATE_IDLE)) &amp;&amp; ((posLeft != Double.MAX_VALUE &amp;&amp; posRight != Double.MAX_VALUE) || (posBack != Double.MAX_VALUE &amp;&amp; posFront != Double.MAX_VALUE))}"
+                android:text="@string/text_probing_center_apply" />
+        </RelativeLayout>
     </LinearLayout>
 </layout>

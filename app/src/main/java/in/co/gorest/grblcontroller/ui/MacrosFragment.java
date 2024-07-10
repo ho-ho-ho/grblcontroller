@@ -12,8 +12,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
-import com.joanzapata.iconify.widget.IconButton;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -77,7 +75,7 @@ public class MacrosFragment extends BaseFragment implements View.OnClickListener
         binding.setMachineStatus(machineStatus);
         View view = binding.getRoot();
 
-        IconButton alarmButton = view.findViewById(R.id.alarm_button);
+        Button alarmButton = view.findViewById(R.id.alarm_button);
         alarmButton.setOnClickListener(view1 -> {
             if (!machineStatus.getState().equals(Constants.MACHINE_STATUS_RUN)) {
                 fragmentInteractionListener.onGcodeCommandReceived(
@@ -86,7 +84,7 @@ public class MacrosFragment extends BaseFragment implements View.OnClickListener
         });
 
         for (int resourceId : new Integer[]{R.id.goto_x_zero, R.id.goto_y_zero, R.id.goto_z_zero}) {
-            IconButton btn = view.findViewById(resourceId);
+            Button btn = view.findViewById(resourceId);
             btn.setOnClickListener(view1 -> {
                 final String tag = view1.getTag().toString();
 
@@ -105,7 +103,7 @@ public class MacrosFragment extends BaseFragment implements View.OnClickListener
 
         for (int resourceId : new Integer[]{R.id.wpos_g54, R.id.wpos_g55, R.id.wpos_g56,
                 R.id.wpos_g57}) {
-            IconButton btn = view.findViewById(resourceId);
+            Button btn = view.findViewById(resourceId);
             btn.setOnClickListener(view1 -> {
                 if (machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)) {
                     sendCommandIfIdle(view1.getTag().toString());
@@ -175,7 +173,7 @@ public class MacrosFragment extends BaseFragment implements View.OnClickListener
         if (sharedPref.getBoolean(getString(R.string.preference_enable_custom_buttons), false)) {
             for (int resourceId : new Integer[]{R.id.custom_button_1, R.id.custom_button_2,
                     R.id.custom_button_3, R.id.custom_button_4}) {
-                IconButton iconButton = view.findViewById(resourceId);
+                Button iconButton = view.findViewById(resourceId);
                 iconButton.setVisibility(View.VISIBLE);
 
                 if (resourceId == R.id.custom_button_1) {
@@ -205,7 +203,7 @@ public class MacrosFragment extends BaseFragment implements View.OnClickListener
         } else {
             for (int resourceId : new Integer[]{R.id.custom_button_1, R.id.custom_button_2,
                     R.id.custom_button_3, R.id.custom_button_4}) {
-                IconButton iconButton = view.findViewById(resourceId);
+                Button iconButton = view.findViewById(resourceId);
                 iconButton.setVisibility(View.GONE);
             }
         }

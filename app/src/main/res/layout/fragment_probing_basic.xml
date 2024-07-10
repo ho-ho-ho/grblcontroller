@@ -1,5 +1,4 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -14,173 +13,78 @@
         android:orientation="vertical"
         android:padding="4dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_probing_type_straight_title" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="0.2dp"
-            android:layout_margin="4dp"
-            android:background="@color/colorDivider" />
-
-        <RelativeLayout
-            android:id="@+id/probing_x_view"
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:minHeight="48dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/probe_x_location"
-                android:text="@string/text_probing_x_location" />
-
-            <RadioGroup
-                android:id="@+id/probe_x_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/probe_x_left"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_probing_x_location_left" />
-
-                <RadioButton
-                    android:id="@+id/probe_x_none"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/text_probing_x_location_none" />
-
-                <RadioButton
-                    android:id="@+id/probe_x_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_probing_x_location_right" />
-
-            </RadioGroup>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/probing_y_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:minHeight="48dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/probe_y_location"
-                android:text="@string/text_probing_y_location" />
-
-            <RadioGroup
-                android:id="@+id/probe_y_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:orientation="vertical">
-
-                <RadioButton
-                    android:id="@+id/probe_y_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_probing_y_location_back" />
-
-                <RadioButton
-                    android:id="@+id/probe_y_none"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/text_probing_y_location_none" />
-
-                <RadioButton
-                    android:id="@+id/probe_y_front"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_probing_y_location_front" />
-
-            </RadioGroup>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/probe_z_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:minHeight="48dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/probe_z"
-                android:text="@string/text_probing_probe_z" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/probe_z"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:checked="false"
-                tools:ignore="TouchTargetSizeCheck" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/auto_zero_after_probe"
-                android:text="@string/text_probing_auto_zero_z" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/auto_zero_after_probe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                tools:ignore="TouchTargetSizeCheck" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="0.2dp"
-            android:layout_margin="4dp"
-            android:background="@color/colorDivider" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp">
+            android:rowCount="3"
+            android:columnCount="3"
+            android:useDefaultMargins="true">
 
             <Button
-                android:id="@+id/start_probe"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/probing_basic_back_left_button"
                 android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
-                android:text="@string/text_probing_start" />
+                android:text="X-/Y+"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        </RelativeLayout>
+            <Button
+                android:id="@+id/probing_basic_back_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="Y+"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/probing_basic_back_right_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="X+/Y+"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/probing_basic_left_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="X-"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/probing_basic_z_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:padding="0dp"
+                android:text="Z-"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/probing_basic_right_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="X+"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/probing_basic_front_left_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="X-/Y-"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/probing_basic_front_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="Y-"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/probing_basic_front_right_button"
+                android:enabled="@{machineStatus.state.equals(machineStatus.STATE_IDLE)}"
+                android:text="X+/Y-"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </GridLayout>
+
     </LinearLayout>
 </layout>
