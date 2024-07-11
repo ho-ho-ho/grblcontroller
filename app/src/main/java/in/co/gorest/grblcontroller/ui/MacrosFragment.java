@@ -22,6 +22,7 @@ import java.util.concurrent.BlockingQueue;
 
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.databinding.FragmentMacrosBinding;
+import in.co.gorest.grblcontroller.events.CancelQueueEvent;
 import in.co.gorest.grblcontroller.events.GrblOkEvent;
 import in.co.gorest.grblcontroller.events.UiToastEvent;
 import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
@@ -73,6 +74,7 @@ public class MacrosFragment extends BaseFragment implements View.OnClickListener
         FragmentMacrosBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_macros,
                 container, false);
         binding.setMachineStatus(machineStatus);
+
         View view = binding.getRoot();
 
         Button alarmButton = view.findViewById(R.id.alarm_button);
@@ -342,6 +344,15 @@ public class MacrosFragment extends BaseFragment implements View.OnClickListener
         if (customCommandsAsyncTask != null
                 && customCommandsAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
             completedCommands.offer(1);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onCancelQueueEvent(CancelQueueEvent event) {
+        if (customCommandsAsyncTask != null && customCommandsAsyncTask.getStatus() ==
+                AsyncTask.Status.RUNNING) {
+            customCommandsAsyncTask.cancel(true);
+            fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils.GRBL_RESET_COMMAND);
         }
     }
 

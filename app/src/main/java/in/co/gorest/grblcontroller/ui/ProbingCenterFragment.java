@@ -11,7 +11,6 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ObservableDouble;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,8 +27,6 @@ public class ProbingCenterFragment extends BaseFragment {
 
     private MachineStatusListener machineStatus;
     private GrblProbe grblProbe;
-
-    private ToggleButton outsideBtn;
 
     public ProbingCenterFragment() {
     }
@@ -62,65 +59,39 @@ public class ProbingCenterFragment extends BaseFragment {
         binding.setPosRight(grblProbe.getCenterPosRight());
         binding.setPosBack(grblProbe.getCenterPosBack());
         binding.setPosFront(grblProbe.getCenterPosFront());
+
         View view = binding.getRoot();
 
-        outsideBtn = view.findViewById(R.id.probing_center_outside_btn);
+        ToggleButton outsideBtn = view.findViewById(R.id.probing_center_outside_btn);
         outsideBtn.setOnClickListener(view1 -> grblProbe.clearCenterPositions());
+
         Button leftBtn = view.findViewById(R.id.probe_center_x_left_btn);
         leftBtn.setOnClickListener(
-                view1 -> startProbing(GrblProbe.Axis.X, GrblProbe.Direction.Minus));
+                view1 -> startProbing(GrblProbe.Axis.X, GrblProbe.Direction.Minus,
+                        outsideBtn.isChecked()));
 
         Button rightBtn = view.findViewById(R.id.probe_center_x_right_btn);
         rightBtn.setOnClickListener(
-                view1 -> startProbing(GrblProbe.Axis.X, GrblProbe.Direction.Plus));
+                view1 -> startProbing(GrblProbe.Axis.X, GrblProbe.Direction.Plus,
+                        outsideBtn.isChecked()));
 
         Button backBtn = view.findViewById(R.id.probe_center_y_back_btn);
         backBtn.setOnClickListener(
-                view1 -> startProbing(GrblProbe.Axis.Y, GrblProbe.Direction.Plus));
+                view1 -> startProbing(GrblProbe.Axis.Y, GrblProbe.Direction.Plus,
+                        outsideBtn.isChecked()));
 
         Button frontBtn = view.findViewById(R.id.probe_center_y_front_btn);
         frontBtn.setOnClickListener(
-                view1 -> startProbing(GrblProbe.Axis.Y, GrblProbe.Direction.Minus));
+                view1 -> startProbing(GrblProbe.Axis.Y, GrblProbe.Direction.Minus,
+                        outsideBtn.isChecked()));
 
         Button applyBtn = view.findViewById(R.id.probe_center_apply_btn);
-        applyBtn.setOnClickListener(view1 -> {
-            if (!machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)) {
-                EventBus.getDefault()
-                        .post(new UiToastEvent(getString(R.string.text_machine_not_idle), true,
-                                true));
-                return;
-            }
-
-            ObservableDouble left = grblProbe.getCenterPosLeft();
-            ObservableDouble right = grblProbe.getCenterPosRight();
-            ObservableDouble back = grblProbe.getCenterPosBack();
-            ObservableDouble front = grblProbe.getCenterPosFront();
-            if (left.get() != Double.MAX_VALUE && right.get() != Double.MAX_VALUE) {
-                double center = (left.get() + right.get()) / 2;
-                applyCenter(GrblProbe.Axis.X, center);
-                left.set(Double.MAX_VALUE);
-                right.set(Double.MAX_VALUE);
-            }
-
-            if (back.get() != Double.MAX_VALUE && front.get() != Double.MAX_VALUE) {
-                double center = (back.get() + front.get()) / 2;
-                applyCenter(GrblProbe.Axis.Y, center);
-                back.set(Double.MAX_VALUE);
-                front.set(Double.MAX_VALUE);
-            }
-
-            EventBus.getDefault().post(new UiToastEvent("Center applied successfully."));
-        });
+        applyBtn.setOnClickListener(view1 -> applyCenters());
 
         return view;
     }
 
-    private void applyCenter(GrblProbe.Axis axis, double center) {
-        fragmentInteractionListener.onGcodeCommandReceived("G53G0" + axis.name() + center);
-        fragmentInteractionListener.onGcodeCommandReceived("G90G10L20P0" + axis.name() + "0");
-    }
-
-    private void startProbing(GrblProbe.Axis axis, GrblProbe.Direction dir) {
+    private void startProbing(GrblProbe.Axis axis, GrblProbe.Direction dir, boolean isOutside) {
         if (!machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)) {
             EventBus.getDefault()
                     .post(new UiToastEvent(getString(R.string.text_machine_not_idle), true, true));
@@ -132,7 +103,7 @@ public class ProbingCenterFragment extends BaseFragment {
 
         GrblProbe.Configuration.Builder builder = new GrblProbe.Configuration.Builder()
                 .type(GrblProbe.ProbeType.Center)
-                .centerDirection(outsideBtn.isChecked() ? GrblProbe.CenterDirection.Outside
+                .centerDirection(isOutside ? GrblProbe.CenterDirection.Outside
                         : GrblProbe.CenterDirection.Inside)
                 .addAxisDir(axis, dir);
 
@@ -143,5 +114,15 @@ public class ProbingCenterFragment extends BaseFragment {
                         (dialog, which) -> grblProbe.probe(builder.build()))
                 .setNegativeButton(getString(R.string.text_cancel), null)
                 .show();
+    }
+
+    private void applyCenters() {
+        if (!machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)) {
+            EventBus.getDefault().post(
+                    new UiToastEvent(getString(R.string.text_machine_not_idle), true, true));
+            return;
+        }
+
+        grblProbe.applyCenters();
     }
 }

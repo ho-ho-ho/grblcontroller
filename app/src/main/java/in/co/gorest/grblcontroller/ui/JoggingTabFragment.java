@@ -50,6 +50,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.databinding.FragmentJoggingTabBinding;
+import in.co.gorest.grblcontroller.events.CancelQueueEvent;
 import in.co.gorest.grblcontroller.events.JogCommandEvent;
 import in.co.gorest.grblcontroller.events.UiToastEvent;
 import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
@@ -322,13 +323,7 @@ public class JoggingTabFragment extends BaseFragment implements View.OnClickList
                         GrblUtils.GRBL_JOG_CANCEL_COMMAND);
             }
 
-            /*TODO: implement a way to stop custom command
-            if (customCommandsAsyncTask != null && customCommandsAsyncTask.getStatus() ==
-            AsyncTask.Status.RUNNING) {
-                customCommandsAsyncTask.cancel(true);
-                fragmentInteractionListener.onGrblRealTimeCommandReceived(GrblUtils
-                .GRBL_RESET_COMMAND);
-            }*/
+            EventBus.getDefault().post(new CancelQueueEvent());
         }
     }
 

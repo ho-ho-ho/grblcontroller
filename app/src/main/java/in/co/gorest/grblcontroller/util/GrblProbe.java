@@ -337,6 +337,29 @@ public class GrblProbe {
         stateMachine();
     }
 
+    private void applyCenter(Axis axis, double center) {
+        grblHandler.onGcodeCommandReceived("G53G0" + axis.name() + center);
+        grblHandler.onGcodeCommandReceived("G90G10L20P0" + axis.name() + "0");
+    }
+
+    public void applyCenters() {
+        if (centerPosLeft.get() != Double.MAX_VALUE && centerPosRight.get() != Double.MAX_VALUE) {
+            double center = (centerPosLeft.get() + centerPosRight.get()) / 2.0;
+            applyCenter(GrblProbe.Axis.X, center);
+            centerPosLeft.set(Double.MAX_VALUE);
+            centerPosRight.set(Double.MAX_VALUE);
+        }
+
+        if (centerPosBack.get() != Double.MAX_VALUE && centerPosFront.get() != Double.MAX_VALUE) {
+            double center = (centerPosBack.get() + centerPosFront.get()) / 2.0;
+            applyCenter(GrblProbe.Axis.Y, center);
+            centerPosBack.set(Double.MAX_VALUE);
+            centerPosFront.set(Double.MAX_VALUE);
+        }
+
+        EventBus.getDefault().post(new UiToastEvent("Center(s) applied successfully."));
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGrblProbeEvent(GrblProbeEvent event) {
         if (!isRunning) {

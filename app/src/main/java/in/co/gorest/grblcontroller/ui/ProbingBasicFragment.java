@@ -56,6 +56,7 @@ public class ProbingBasicFragment extends BaseFragment {
         FragmentProbingBasicBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_probing_basic, container, false);
         binding.setMachineStatus(machineStatus);
+
         View view = binding.getRoot();
 
         for (int resourceId : new Integer[]{R.id.probing_basic_back_left_button,

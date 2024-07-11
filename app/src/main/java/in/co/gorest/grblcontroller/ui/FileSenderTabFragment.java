@@ -38,12 +38,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-
-import com.joanzapata.iconify.widget.IconButton;
-import com.joanzapata.iconify.widget.IconTextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -122,12 +120,12 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         visualizerView.setRenderer(GCodeVisualizerRenderer.getInstance());
         visualizerView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-        IconTextView selectGcodeFile = view.findViewById(R.id.select_gcode_file);
+        Button selectGcodeFile = view.findViewById(R.id.select_gcode_file);
         selectGcodeFile.setOnClickListener(view14 -> {
             getFilePicker();
         });
 
-        final IconButton enableChecking = view.findViewById(R.id.enable_checking);
+        final Button enableChecking = view.findViewById(R.id.enable_checking);
         enableChecking.setOnClickListener(view13 -> {
             if (machineStatus.getState().equals(Constants.MACHINE_STATUS_IDLE)
                     || machineStatus.getState()
@@ -138,7 +136,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
             }
         });
 
-        final IconButton startStreaming = view.findViewById(R.id.start_streaming);
+        final Button startStreaming = view.findViewById(R.id.start_streaming);
         startStreaming.setOnClickListener(view12 -> {
             if (fileSender.getGcodeUri() == null) {
                 EventBus.getDefault()
@@ -157,7 +155,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
             startFileStreaming();
         });
 
-        final IconButton stopStreaming = view.findViewById(R.id.stop_streaming);
+        final Button stopStreaming = view.findViewById(R.id.stop_streaming);
         stopStreaming.setOnClickListener(view1 -> stopFileStreaming());
 
         for (int resourceId : new Integer[]{R.id.feed_override_fine_minus,
@@ -165,9 +163,8 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
                 R.id.feed_override_coarse_minus, R.id.feed_override_coarse_plus,
                 R.id.spindle_override_fine_minus, R.id.spindle_override_fine_plus,
                 R.id.spindle_override_coarse_minus, R.id.spindle_override_coarse_plus,
-                R.id.rapid_overrides_reset, R.id.rapid_override_medium, R.id.rapid_override_low,
                 R.id.toggle_spindle, R.id.toggle_flood_coolant, R.id.toggle_mist_coolant}) {
-            IconButton iconButton = view.findViewById(resourceId);
+            Button iconButton = view.findViewById(resourceId);
             iconButton.setOnClickListener(this);
             iconButton.setOnLongClickListener(this);
         }
@@ -335,12 +332,6 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
             sendRealTimeCommand(Overrides.CMD_SPINDLE_OVR_COARSE_MINUS);
         } else if (id == R.id.spindle_override_coarse_plus) {
             sendRealTimeCommand(Overrides.CMD_SPINDLE_OVR_COARSE_PLUS);
-        } else if (id == R.id.rapid_override_low) {
-            sendRealTimeCommand(Overrides.CMD_RAPID_OVR_LOW);
-        } else if (id == R.id.rapid_override_medium) {
-            sendRealTimeCommand(Overrides.CMD_RAPID_OVR_MEDIUM);
-        } else if (id == R.id.rapid_overrides_reset) {
-            sendRealTimeCommand(Overrides.CMD_RAPID_OVR_RESET);
         } else if (id == R.id.toggle_spindle) {
             sendRealTimeCommand(Overrides.CMD_TOGGLE_SPINDLE);
         } else if (id == R.id.toggle_flood_coolant) {

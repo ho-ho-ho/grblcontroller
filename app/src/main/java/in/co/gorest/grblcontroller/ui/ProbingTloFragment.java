@@ -52,11 +52,11 @@ public class ProbingTloFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-
         FragmentProbingTloBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_probing_tlo, container, false);
         binding.setMachineStatus(machineStatus);
         binding.setReferenceZ(grblProbe.getReferenceZValue());
+
         View view = binding.getRoot();
 
         Button probeReferenceBtn = view.findViewById(R.id.start_tlo_reference);

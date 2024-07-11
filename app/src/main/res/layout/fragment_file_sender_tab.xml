@@ -38,15 +38,157 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <com.joanzapata.iconify.widget.IconTextView
-                    android:text="{fa-folder-open 24dp}"
+                <Button
+                    style="@style/IconOnlyButton"
                     android:id="@+id/select_gcode_file"
+                    android:enabled="@{!(machineStatus.state.equals(machineStatus.STATE_IDLE) || machineStatus.state.equals(machineStatus.STATE_CHECK)) &amp;&amp; fileSender.status.equals(fileSender.STATUS_IDLE)}"
                     android:layout_alignParentEnd="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:icon="@drawable/outline_file_open_24"
                     tools:ignore="HardcodedText" />
 
             </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:padding="2dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/file_sender_total_lines_text"
+                        android:layout_alignParentStart="true"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/text_lines_total_sent" />
+
+                    <TextView
+                        android:id="@+id/file_sender_total_lines_value"
+                        android:layout_below="@+id/file_sender_total_lines_text"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:text='@{fileSender.rowsInFile.toString() + " | " + fileSender.rowsSent.toString()}' />
+
+                    <TextView
+                        android:id="@+id/file_sender_time_elapsed_text"
+                        android:layout_below="@+id/file_sender_total_lines_value"
+                        android:layout_alignParentStart="true"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/text_time_elapsed" />
+
+                    <TextView
+                        android:id="@+id/file_sender_time_elapsed_value"
+                        android:layout_below="@+id/file_sender_time_elapsed_text"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:text="@{fileSender.elapsedTime}" />
+
+                    <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/file_sender_time_elapsed_value"
+                        android:columnCount="3">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="0.5"
+                            android:layout_height="wrap_content"
+                            android:text="Axis" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Min" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Max" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="0.5"
+                            android:layout_height="wrap_content"
+                            android:text="X" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.valueOf(fileSender.bounds.XMin)}" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.valueOf(fileSender.bounds.XMax)}" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="0.5"
+                            android:layout_height="wrap_content"
+                            android:text="Y" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.valueOf(fileSender.bounds.YMin)}" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.valueOf(fileSender.bounds.YMax)}" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="0.5"
+                            android:layout_height="wrap_content"
+                            android:text="Z" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.valueOf(fileSender.bounds.ZMin)}" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_columnWeight="1"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.valueOf(fileSender.bounds.ZMax)}" />
+
+                    </GridLayout>
+
+                </RelativeLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:padding="4dp"
+                    android:layout_weight="1.25"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <android.opengl.GLSurfaceView
+                        android:id="@+id/file_sender_visualizer"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintDimensionRatio="H,1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <View
                 android:layout_margin="4dp"
@@ -54,343 +196,213 @@
                 android:background="@color/colorDivider"
                 android:layout_width="fill_parent" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <androidx.gridlayout.widget.GridLayout
-                    app:columnCount="2"
-                    app:useDefaultMargins="true"
-                    app:alignmentMode="alignBounds"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/enable_checking"
+                    android:layout_margin="4dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+                    android:gravity="center"
+                    app:icon="@{machineStatus.state.equals(machineStatus.STATE_CHECK) ? @drawable/baseline_check_24 : @drawable/baseline_clear_24}"
+                    android:text="Check"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
-                    <TextView
-                        app:layout_gravity="left"
-                        android:text="@string/text_lines_total_sent" />
+                <com.google.android.material.button.MaterialButton
+                    style="@style/IconOnlyButton"
+                    android:layout_margin="4dp"
+                    android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+                    android:id="@+id/start_streaming"
+                    android:layout_weight="0.33"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    app:icon="@{machineStatus.state.equals(machineStatus.STATE_RUN) ? @drawable/baseline_pause_24 : @drawable/baseline_play_arrow_24}"
+                    tools:ignore="HardcodedText" />
 
-                    <TextView
-                        app:layout_gravity="right"
-                        android:text='@{fileSender.rowsInFile.toString() + " | " + fileSender.rowsSent.toString()}' />
+                <com.google.android.material.button.MaterialButton
+                    style="@style/IconOnlyButton"
+                    android:layout_margin="4dp"
+                    android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+                    android:id="@+id/stop_streaming"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.33"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/baseline_stop_24"
+                    tools:ignore="HardcodedText" />
 
-                    <TextView
-                        app:layout_gravity="left"
-                        android:text="@string/text_time_elapsed" />
+            </LinearLayout>
 
-                    <TextView
-                        app:layout_gravity="right"
-                        android:text="@{fileSender.elapsedTime}" />
+            <View
+                android:layout_margin="4dp"
+                android:layout_height="0.2dp"
+                android:background="@color/colorDivider"
+                android:layout_width="fill_parent" />
 
-                    <TextView
-                        app:layout_gravity="left"
-                        android:text='@{machineStatus.compileTimeOptions.variableSpindle ? @string/text_overrides_fsv : @string/text_overrides_fs}' />
-
-                    <TextView
-                        app:layout_gravity="right"
-                        android:text='@{machineStatus.overridePercents.feed.toString() + ":" + machineStatus.overridePercents.spindle.toString() + (machineStatus.compileTimeOptions.variableSpindle ? ":" + machineStatus.spindleSpeed : "")}' />
-
-                </androidx.gridlayout.widget.GridLayout>
-
-            </RelativeLayout>
-
-            <TableLayout
-                android:layout_centerHorizontal="true"
-                android:stretchColumns="*"
+            <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:ignore="ObsoleteLayoutParam">
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:columnCount="2">
 
-                <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Feed" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:id="@+id/enable_checking"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:gravity="center"
-                        android:text='@{machineStatus.state.equals(machineStatus.STATE_CHECK) ? @string/text_check_mode_on : @string/text_check_mode_off}'
-                        tools:ignore="SpeakableTextPresentCheck" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:id="@+id/start_streaming"
-                        android:text="{fa-play 16dp} {fa-pause 16dp}"
-                        android:layout_weight="0.33"
-                        android:layout_width="0dp"
-                        android:gravity="center"
-                        android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
-
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:id="@+id/stop_streaming"
-                        android:layout_gravity="center_vertical"
-                        android:text=" {fa-stop 16dp @color/colorPrimary} "
-                        android:layout_weight="0.33"
-                        android:layout_width="0dp"
-                        android:gravity="center"
-                        android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
-
-                </TableRow>
-
-                <TableRow>
-
-                <View
-                        android:layout_margin="4dp"
-                        android:layout_height="0.2dp"
-                        android:layout_weight="1"
-                        android:background="@color/colorDivider"
-                        android:layout_width="fill_parent" />
-                </TableRow>
-
-                <TableRow>
-
-                <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-fast-backward 16dp} F10"
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/feed_override_coarse_minus"
-                        android:layout_weight="0.25"
                         android:layout_width="0dp"
-                        android:gravity="center"
+                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_double_arrow_left_24" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-backward 16dp} F1"
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/feed_override_fine_minus"
-                        android:layout_weight="0.25"
                         android:layout_width="0dp"
-                        android:gravity="center"
+                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_arrow_left_24" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-forward 16dp} F1"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@{machineStatus.overridePercents.feed.toString() + '%'}" />
+
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/feed_override_fine_plus"
-                        android:layout_weight="0.25"
                         android:layout_width="0dp"
-                        android:gravity="center"
+                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_arrow_right_24" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-fast-forward 16dp} F10"
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/feed_override_coarse_plus"
-                        android:layout_weight="0.25"
                         android:layout_width="0dp"
-                        android:gravity="center"
+                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_double_arrow_right_24" />
 
-                </TableRow>
+                </LinearLayout>
 
-                <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Speed" />
 
-                <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-fast-backward 16dp} S10"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp">
+
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/spindle_override_coarse_minus"
-                        android:layout_weight="0.25"
                         android:layout_width="0dp"
-                        android:gravity="center"
+                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_double_arrow_left_24" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-backward 16dp} S1"
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/spindle_override_fine_minus"
-                        android:layout_weight="0.25"
                         android:layout_width="0dp"
-                        android:gravity="center"
+                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_arrow_left_24" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-forward 16dp} S1"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@{machineStatus.overridePercents.spindle.toString() + '%'}" />
+
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/spindle_override_fine_plus"
-                        android:layout_weight="0.25"
                         android:layout_width="0dp"
-                        android:gravity="center"
+                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_arrow_right_24" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:text="{fa-fast-forward 16dp} S10"
+                    <Button
+                        style="@style/IconOnlyButton"
                         android:id="@+id/spindle_override_coarse_plus"
+                        android:layout_width="0dp"
                         android:layout_weight="0.25"
-                        android:layout_width="0dp"
-                        android:gravity="center"
                         android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
+                        app:icon="@drawable/baseline_keyboard_double_arrow_right_24" />
 
-                </TableRow>
+                </LinearLayout>
 
-                <TableRow>
+            </GridLayout>
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:id="@+id/rapid_overrides_reset"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:gravity="center"
-                        android:text='@{safeUnbox(machineStatus.overridePercents.rapid) == 100 ? "{fa-rocket 18dp @color/colorAccent} R100" : "{fa-rocket 16dp} R100"}'
-                        tools:ignore="SpeakableTextPresentCheck" />
+            <View
+                android:layout_margin="4dp"
+                android:layout_height="0.2dp"
+                android:background="@color/colorDivider"
+                android:layout_width="match_parent" />
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:id="@+id/rapid_override_medium"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:gravity="center"
-                        android:text='@{safeUnbox(machineStatus.overridePercents.rapid) == 50 ? "{fa-rocket 18dp @color/colorAccent} R50" : "{fa-rocket 16dp} R50"}'
-                        tools:ignore="SpeakableTextPresentCheck" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                    <com.joanzapata.iconify.widget.IconButton
-                        android:id="@+id/rapid_override_low"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:gravity="center"
-                        android:text='@{safeUnbox(machineStatus.overridePercents.rapid) == 25 ? "{fa-rocket 18dp @color/colorAccent} R25" : "{fa-rocket 16dp} R25"}'
-                        tools:ignore="SpeakableTextPresentCheck" />
-
-                </TableRow>
-
-                <TableRow>
-
-                    <com.joanzapata.iconify.widget.IconButton
+                <com.google.android.material.button.MaterialButton
                         android:id="@+id/toggle_spindle"
+                    android:layout_margin="4dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
                         android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:gravity="center"
-                        android:text='@{(machineStatus.accessoryStates.spindleCCW || machineStatus.accessoryStates.spindleCW) ? @string/text_spindle_on : @string/text_spindle_off}'
-                        tools:ignore="SpeakableTextPresentCheck" />
+                    app:icon="@{(machineStatus.accessoryStates.spindleCCW || machineStatus.accessoryStates.spindleCW) ? @drawable/baseline_check_24 : @drawable/baseline_clear_24}"
+                    android:text="Spindle" />
 
-                    <com.joanzapata.iconify.widget.IconButton
+                <com.google.android.material.button.MaterialButton
                         android:id="@+id/toggle_flood_coolant"
+                    android:layout_margin="4dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
                         android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:gravity="center"
-                        android:text='@{machineStatus.accessoryStates.flood ? @string/text_flood_on : @string/text_flood_off}'
-                        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+                    app:icon="@{machineStatus.accessoryStates.flood ? @drawable/baseline_check_24 : @drawable/baseline_clear_24}"
+                    android:text="Flood" />
 
-                    <com.joanzapata.iconify.widget.IconButton
+                <com.google.android.material.button.MaterialButton
                         android:id="@+id/toggle_mist_coolant"
+                    android:layout_margin="4dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.33"
                         android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
-                        android:gravity="center"
-                        android:text='@{machineStatus.accessoryStates.mist ? @string/text_mist_on : @string/text_mist_off}'
-                        tools:ignore="SpeakableTextPresentCheck" />
-                </TableRow>
+                    app:icon="@{machineStatus.accessoryStates.mist ? @drawable/baseline_check_24 : @drawable/baseline_clear_24}"
+                    android:text="Mist" />
 
-            </TableLayout>
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:visibility="@{fileSender.bounds != null ? View.VISIBLE : View.GONE}">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Axis" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="8dp"
-                        android:text="Min" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="8dp"
-                        android:text="Max" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView android:text="X" />
-
-                    <TextView
-                        android:text="@{String.valueOf(fileSender.bounds.XMin)}"
-                        android:paddingLeft="8dp" />
-
-                    <TextView
-                        android:text="@{String.valueOf(fileSender.bounds.XMax)}"
-                        android:paddingLeft="8dp" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView android:text="Y" />
-
-                    <TextView
-                        android:text="@{String.valueOf(fileSender.bounds.YMin)}"
-                        android:paddingLeft="8dp" />
-
-                    <TextView
-                        android:text="@{String.valueOf(fileSender.bounds.YMax)}"
-                        android:paddingLeft="8dp" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView android:text="Z" />
-
-                    <TextView
-                        android:text="@{String.valueOf(fileSender.bounds.ZMin)}"
-                        android:paddingLeft="8dp" />
-
-                    <TextView
-                        android:text="@{String.valueOf(fileSender.bounds.ZMax)}"
-                        android:paddingLeft="8dp" />
-                </TableRow>
-            </TableLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:visibility="@{fileSender.bounds != null ? View.VISIBLE : View.GONE}"
-                android:padding="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <android.opengl.GLSurfaceView
-                    android:id="@+id/file_sender_visualizer"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="H,1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
