@@ -84,6 +84,7 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer,
 
     public void resetVertices() {
         numVertices = 0;
+        vertices.clear();
     }
 
     private void addVertex(double x, double y, double z, boolean rapid) {
