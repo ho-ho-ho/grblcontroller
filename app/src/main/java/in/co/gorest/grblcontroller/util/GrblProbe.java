@@ -274,7 +274,7 @@ public class GrblProbe {
                 EventBus.getDefault().post(new UiToastEvent(GrblController.getInstance()
                         .getString(R.string.text_probing_tlo_probe_reference_success)));
             } else {
-                double toolOffset = referenceZValue.get() - probedPosition;
+                double toolOffset = probedPosition - referenceZValue.get();
                 grblHandler.onGcodeCommandReceived("G43.1Z" + toolOffset);
                 grblHandler.onGcodeCommandReceived(GrblUtils.GRBL_VIEW_GCODE_PARAMETERS_COMMAND);
                 EventBus.getDefault().post(new UiToastEvent(
