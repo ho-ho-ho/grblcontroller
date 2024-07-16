@@ -1,0 +1,34 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="in.co.gorest.grblcontroller.model.Tool" />
+
+        <import type="androidx.databinding.ObservableArrayList" />
+
+        <variable
+            name="tools"
+            type="ObservableArrayList&lt;Tool>" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cam_import_fusion_tools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/baseline_table_view_24"
+            android:text="Import Fusion Tool Table" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{tools.size + ` Tools`}" />
+
+    </LinearLayout>
+</layout>

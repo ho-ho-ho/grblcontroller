@@ -85,6 +85,8 @@ import in.co.gorest.grblcontroller.util.GrblUtils;
 public abstract class GrblActivity extends AppCompatActivity implements
         BaseFragment.OnFragmentInteractionListener {
 
+    public static boolean isAppRunning;
+
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
@@ -93,10 +95,12 @@ public abstract class GrblActivity extends AppCompatActivity implements
     protected ConsoleLoggerListener consoleLogger = null;
     protected MachineStatusListener machineStatus = null;
     protected GrblBluetoothSerialService grblBluetoothSerialService = null;
-
-    public static boolean isAppRunning;
-
     private Toast lastToast;
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -145,7 +149,6 @@ public abstract class GrblActivity extends AppCompatActivity implements
 
         return false;
     }
-
 
     @Override
     public void onDestroy() {
@@ -256,6 +259,8 @@ public abstract class GrblActivity extends AppCompatActivity implements
                     new IconDrawable(this, FontAwesomeIcons.fa_television).colorRes(
                                     R.color.colorAccent)
                             .sizeDp(32)));
+            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this,
+                    FontAwesomeIcons.fa_crosshairs).colorRes(R.color.colorAccent).sizeDp(32)));
         } else {
             tabLayout.addTab(tabLayout.newTab().setIcon(
                     new IconDrawable(this, FontAwesomeIcons.fa_arrows_alt).colorRes(
@@ -269,6 +274,8 @@ public abstract class GrblActivity extends AppCompatActivity implements
                     new IconDrawable(this, FontAwesomeIcons.fa_television).colorRes(
                                     R.color.colorAccent)
                             .sizeDp(21)));
+            tabLayout.addTab(tabLayout.newTab().setIcon(new IconDrawable(this,
+                    FontAwesomeIcons.fa_crosshairs).colorRes(R.color.colorAccent).sizeDp(21)));
         }
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -388,11 +395,6 @@ public abstract class GrblActivity extends AppCompatActivity implements
     @Override
     public void onGrblRealTimeCommandReceived(byte command) {
 
-    }
-
-    public static boolean isTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     private void checkPowerManagement() {
