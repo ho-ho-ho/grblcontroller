@@ -240,7 +240,7 @@
             </LinearLayout>
 
             <View
-                android:layout_margin="4dp"
+                android:layout_margin="16dp"
                 android:layout_height="0.2dp"
                 android:background="@color/colorDivider"
                 android:layout_width="fill_parent" />
@@ -252,11 +252,23 @@
                 android:layout_marginRight="4dp"
                 android:columnCount="2">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_columnWeight="0.5"
                     android:layout_height="wrap_content"
-                    android:text="Feed" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Feed" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text='@{String.format("%.1f", machineStatus.feedRate)}' />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -271,6 +283,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
                         app:icon="@drawable/baseline_keyboard_double_arrow_left_24" />
 
                     <Button
@@ -279,11 +292,12 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
                         app:icon="@drawable/baseline_keyboard_arrow_left_24" />
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.4"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@{machineStatus.overridePercents.feed.toString() + '%'}" />
@@ -294,6 +308,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
                         app:icon="@drawable/baseline_keyboard_arrow_right_24" />
 
                     <Button
@@ -302,15 +317,28 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
                         app:icon="@drawable/baseline_keyboard_double_arrow_right_24" />
 
                 </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_columnWeight="0.5"
                     android:layout_height="wrap_content"
-                    android:text="Speed" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Speed" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text='@{String.format("%.0f", machineStatus.spindleSpeed)}' />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -325,6 +353,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
                         app:icon="@drawable/baseline_keyboard_double_arrow_left_24" />
 
                     <Button
@@ -333,11 +362,12 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
                         app:icon="@drawable/baseline_keyboard_arrow_left_24" />
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.4"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@{machineStatus.overridePercents.spindle.toString() + '%'}" />
@@ -348,6 +378,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
                         app:icon="@drawable/baseline_keyboard_arrow_right_24" />
 
                     <Button
@@ -356,6 +387,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.25"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
                         app:icon="@drawable/baseline_keyboard_double_arrow_right_24" />
 
                 </LinearLayout>
@@ -363,7 +395,7 @@
             </GridLayout>
 
             <View
-                android:layout_margin="4dp"
+                android:layout_margin="16dp"
                 android:layout_height="0.2dp"
                 android:background="@color/colorDivider"
                 android:layout_width="match_parent" />
