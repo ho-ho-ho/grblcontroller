@@ -21,8 +21,13 @@
 
 package in.co.gorest.grblcontroller;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,9 +35,14 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import in.co.gorest.grblcontroller.events.UiToastEvent;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
 import in.co.gorest.grblcontroller.model.Constants;
+import in.co.gorest.grblcontroller.util.ToolDatabase;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -54,12 +64,52 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragment implements
             SharedPreferences.OnSharedPreferenceChangeListener {
 
+        private boolean cacheToolsFile(Uri uri) throws IOException {
+            InputStream input = getContext().getContentResolver().openInputStream(uri);
+            FileOutputStream output = getContext().openFileOutput(Constants.TOOL_LIBRARY_FILE_NAME,
+                    Context.MODE_PRIVATE);
+            if (input != null) {
+                input.transferTo(output);
+                input.close();
+            }
+            return true;
+        }
+
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == Constants.FILE_PICKER_CSV_REQUEST_CODE
+                    && resultCode == Activity.RESULT_OK) {
+                Uri uri = data.getData();
+                new Thread(() -> {
+                    try {
+                        if (cacheToolsFile(uri)) {
+                            ToolDatabase.getInstance().load(
+                                    getContext().openFileInput(Constants.TOOL_LIBRARY_FILE_NAME));
+                        }
+                    } catch (IOException ignored) {
+                    }
+                }).start();
+            }
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getPreferenceManager().setSharedPreferencesName(
                     getString(R.string.shared_preference_key));
             addPreferencesFromResource(R.xml.application_pref);
+            Preference filePicker = findPreference("filePicker");
+            filePicker.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("text/csv");
+                    startActivityForResult(intent, Constants.FILE_PICKER_CSV_REQUEST_CODE);
+                    return true;
+                }
+            });
         }
 
         @Override

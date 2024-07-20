@@ -62,6 +62,9 @@ import com.joanzapata.iconify.widget.IconTextView;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import es.dmoral.toasty.Toasty;
 import in.co.gorest.grblcontroller.databinding.ActivityMainBinding;
 import in.co.gorest.grblcontroller.events.ConsoleMessageEvent;
@@ -81,6 +84,7 @@ import in.co.gorest.grblcontroller.service.GrblBluetoothSerialService;
 import in.co.gorest.grblcontroller.ui.BaseFragment;
 import in.co.gorest.grblcontroller.ui.GrblFragmentPagerAdapter;
 import in.co.gorest.grblcontroller.util.GrblUtils;
+import in.co.gorest.grblcontroller.util.ToolDatabase;
 
 public abstract class GrblActivity extends AppCompatActivity implements
         BaseFragment.OnFragmentInteractionListener {
@@ -241,6 +245,13 @@ public abstract class GrblActivity extends AppCompatActivity implements
         machineStatus.setCustomStartUpString(
                 sharedPref.getString(getString(R.string.preference_start_up_string), ""));
 
+        if (sharedPref.getBoolean(getString(R.string.preference_use_tool_library), false)) {
+            try {
+                FileInputStream toolsFile = openFileInput(Constants.TOOL_LIBRARY_FILE_NAME);
+                ToolDatabase.getInstance().load(toolsFile);
+            } catch (FileNotFoundException ignored) {
+            }
+        }
     }
 
     protected void setupTabLayout() {

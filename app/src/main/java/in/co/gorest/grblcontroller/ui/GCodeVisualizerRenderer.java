@@ -12,10 +12,8 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import in.co.gorest.grblcontroller.model.Bounds;
-import in.co.gorest.grblcontroller.util.SimpleGcodeParser;
 
-public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer,
-        SimpleGcodeParser.GcodeParserListener {
+public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer {
 
     // allocate 256MB RAM for vertices
     private static final int NUM_VERTICES = (256 * 1024 * 1024) / 12;
@@ -99,12 +97,10 @@ public class GCodeVisualizerRenderer implements GLSurfaceView.Renderer,
         numVertices++;
     }
 
-    @Override
     public void move(double x, double y, double z) {
         addVertex(x, y, z, false);
     }
 
-    @Override
     public void rapidMove(double x, double y, double z) {
         addVertex(x, y, z, true);
     }

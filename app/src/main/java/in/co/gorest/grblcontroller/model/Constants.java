@@ -81,4 +81,6 @@ public interface Constants {
 
     String TEXT_CATEGORY_UPDATE = "update";
     String TEXT_CATEGORY_LINK = "link";
+
+    String TOOL_LIBRARY_FILE_NAME = "tools.csv";
 }

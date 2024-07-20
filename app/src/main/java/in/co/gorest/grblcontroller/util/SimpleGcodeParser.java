@@ -10,6 +10,7 @@ import in.co.gorest.grblcontroller.model.Bounds;
 public class SimpleGcodeParser {
 
     public interface GcodeParserListener {
+        void prepareTool(int number);
 
         void move(double x, double y, double z);
 
@@ -66,6 +67,9 @@ public class SimpleGcodeParser {
                 y = Double.parseDouble(address);
             } else if (word.equals("Z")) {
                 z = Double.parseDouble(address);
+            } else if (word.equals("T")) {
+                int toolNumber = Integer.parseInt(address);
+                listener.prepareTool(toolNumber);
             } else if (word.equals("G")) {
                 if (address.equals("53") || (address.equals("28"))) {
                     // doesn't bother us here

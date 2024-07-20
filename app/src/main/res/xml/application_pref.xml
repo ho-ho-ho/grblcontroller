@@ -121,6 +121,25 @@
     </PreferenceScreen>
 
     <PreferenceScreen
+        android:key="probing_preferences_flashcard"
+        android:icon="@drawable/ic_open_with_black_24dp"
+        android:title="@string/text_probing_preferences"
+        android:summary="customize probing panel preferences">
+
+        <Preference android:title="Tool library preferences" />
+
+        <CheckBoxPreference
+            android:key="@string/preference_use_tool_library"
+            android:title="Use tool library"
+            android:defaultValue="false" />
+
+        <Preference
+            android:key="filePicker"
+            android:persistent="false"
+            android:title="Import a fusion tool library (.csv)" />
+    </PreferenceScreen>
+
+    <PreferenceScreen
         android:key="jogging_preferences_flashcard"
         android:icon="@drawable/ic_open_with_black_24dp"
         android:title="@string/text_jogging_preferences"

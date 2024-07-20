@@ -18,7 +18,8 @@
     <ScrollView
         android:fillViewport="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="2dp">
 
         <LinearLayout
             android:orientation="vertical"
@@ -27,7 +28,6 @@
             android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:padding="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -55,47 +55,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <RelativeLayout
-                    android:padding="2dp"
-                    android:layout_weight="1"
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/file_sender_total_lines_text"
-                        android:layout_alignParentStart="true"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/text_lines_total_sent" />
-
-                    <TextView
-                        android:id="@+id/file_sender_total_lines_value"
-                        android:layout_below="@+id/file_sender_total_lines_text"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_width="wrap_content"
-                        android:text='@{fileSender.rowsInFile.toString() + " | " + fileSender.rowsSent.toString()}' />
-
-                    <TextView
-                        android:id="@+id/file_sender_time_elapsed_text"
-                        android:layout_below="@+id/file_sender_total_lines_value"
-                        android:layout_alignParentStart="true"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/text_time_elapsed" />
-
-                    <TextView
-                        android:id="@+id/file_sender_time_elapsed_value"
-                        android:layout_below="@+id/file_sender_time_elapsed_text"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_width="wrap_content"
-                        android:text="@{fileSender.elapsedTime}" />
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                     <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/file_sender_time_elapsed_value"
                         android:columnCount="3">
 
                         <TextView
@@ -172,7 +140,31 @@
 
                     </GridLayout>
 
-                </RelativeLayout>
+                    <View
+                        android:layout_margin="2dp"
+                        android:layout_height="0.2dp"
+                        android:background="@color/colorDivider"
+                        android:layout_width="fill_parent" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Tools used" />
+
+                        <ListView
+                            android:id="@+id/file_sender_tools_used_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+                >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:padding="4dp"
@@ -191,10 +183,41 @@
             </LinearLayout>
 
             <View
-                android:layout_margin="4dp"
+                android:layout_margin="2dp"
                 android:layout_height="0.2dp"
                 android:background="@color/colorDivider"
                 android:layout_width="fill_parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Time elapsed: " />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@{fileSender.elapsedTime}" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Lines sent: " />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@{fileSender.rowsSent.toString() + `/` + fileSender.rowsInFile.toString()}" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -240,7 +263,7 @@
             </LinearLayout>
 
             <View
-                android:layout_margin="16dp"
+                android:layout_margin="2dp"
                 android:layout_height="0.2dp"
                 android:background="@color/colorDivider"
                 android:layout_width="fill_parent" />
@@ -248,8 +271,6 @@
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
                 android:columnCount="2">
 
                 <LinearLayout
@@ -395,7 +416,7 @@
             </GridLayout>
 
             <View
-                android:layout_margin="16dp"
+                android:layout_margin="8dp"
                 android:layout_height="0.2dp"
                 android:background="@color/colorDivider"
                 android:layout_width="match_parent" />
@@ -405,12 +426,12 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.button.MaterialButton
-                        android:id="@+id/toggle_spindle"
+                    android:id="@+id/toggle_spindle"
                     android:layout_margin="4dp"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:enabled="@{!machineStatus.state.equals(machineStatus.STATE_NOT_CONNECTED)}"
                     app:icon="@{(machineStatus.accessoryStates.spindleCCW || machineStatus.accessoryStates.spindleCW) ? @drawable/baseline_check_24 : @drawable/baseline_clear_24}"
                     android:text="Spindle" />
 

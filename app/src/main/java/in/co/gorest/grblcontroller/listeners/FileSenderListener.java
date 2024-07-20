@@ -27,6 +27,9 @@ import android.net.Uri;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import in.co.gorest.grblcontroller.BR;
 import in.co.gorest.grblcontroller.model.Bounds;
 
@@ -36,6 +39,7 @@ public class FileSenderListener extends BaseObservable {
     private Uri gcodeUri;
     private Integer rowsInFile;
     private Integer rowsSent;
+    private LinkedList<Integer> toolsUsed;
 
     private String status;
     private Bounds bounds;
@@ -69,6 +73,7 @@ public class FileSenderListener extends BaseObservable {
         this.gcodeUri = null;
         this.rowsInFile = 0;
         this.rowsSent = 0;
+        this.toolsUsed = new LinkedList<>();
     }
 
     @Bindable
@@ -161,4 +166,18 @@ public class FileSenderListener extends BaseObservable {
         notifyPropertyChanged(BR.status);
     }
 
+    @Bindable
+    public List<Integer> getToolsUsed() {
+        return this.toolsUsed;
+    }
+
+    public void addToolUsed(Integer toolNumber) {
+        this.toolsUsed.add(toolNumber);
+        notifyPropertyChanged(BR.toolsUsed);
+    }
+
+    public void clearToolsUsed() {
+        this.toolsUsed.clear();
+        notifyPropertyChanged(BR.toolsUsed);
+    }
 }

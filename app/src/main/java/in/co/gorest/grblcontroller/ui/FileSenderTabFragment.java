@@ -39,6 +39,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -53,8 +54,10 @@ import java.io.InputStreamReader;
 
 import in.co.gorest.grblcontroller.GrblController;
 import in.co.gorest.grblcontroller.R;
+import in.co.gorest.grblcontroller.adapters.ToolListAdapter;
 import in.co.gorest.grblcontroller.databinding.FragmentFileSenderTabBinding;
 import in.co.gorest.grblcontroller.events.BluetoothDisconnectEvent;
+import in.co.gorest.grblcontroller.events.GcodeFileParseEvent;
 import in.co.gorest.grblcontroller.events.GrblErrorEvent;
 import in.co.gorest.grblcontroller.events.UiToastEvent;
 import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
@@ -75,6 +78,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
     private FileSenderListener fileSender;
     private EnhancedSharedPreferences sharedPref;
     private GLSurfaceView visualizerView;
+    private ToolListAdapter toolListAdapter;
 
     public FileSenderTabFragment() {
     }
@@ -91,6 +95,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         sharedPref = EnhancedSharedPreferences.getInstance(
                 requireActivity().getApplicationContext(),
                 getString(R.string.shared_preference_key));
+        toolListAdapter = new ToolListAdapter(getContext());
     }
 
     @Override
@@ -114,6 +119,9 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         binding.setMachineStatus(machineStatus);
         binding.setFileSender(fileSender);
         View view = binding.getRoot();
+
+        ListView toolsUsed = view.findViewById(R.id.file_sender_tools_used_list);
+        toolsUsed.setAdapter(toolListAdapter);
 
         visualizerView = view.findViewById(R.id.file_sender_visualizer);
         visualizerView.setEGLContextClientVersion(3);
@@ -284,7 +292,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
             fileSender.setGcodeUri(uri);
             fileSender.setGcodeFileName(cursor.getString(idx));
             fileSender.setElapsedTime("00:00:00");
-            new ReadFileAsyncTask(visualizerView).execute(uri);
+            new ReadFileAsyncTask().execute(uri);
             sharedPref.edit().putString(getString(R.string.most_recent_selected_file), "stream")
                     .apply();
         }
@@ -353,15 +361,11 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         }
     }
 
-    private static class ReadFileAsyncTask extends AsyncTask<Uri, Integer, Integer> {
+    private static class ReadFileAsyncTask extends AsyncTask<Uri, Integer, Integer> implements
+            SimpleGcodeParser.GcodeParserListener {
 
-        private final SimpleGcodeParser simpleParser = new SimpleGcodeParser(
-                GCodeVisualizerRenderer.getInstance());
-        private final GLSurfaceView visualizerView;
-
-        public ReadFileAsyncTask(GLSurfaceView view) {
-            visualizerView = view;
-        }
+        private final GCodeVisualizerRenderer renderer = GCodeVisualizerRenderer.getInstance();
+        private final SimpleGcodeParser simpleParser = new SimpleGcodeParser(this);
 
         protected void onPreExecute() {
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_READING);
@@ -416,15 +420,32 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
             FileSenderListener.getInstance().setRowsInFile(lines);
             FileSenderListener.getInstance().setStatus(FileSenderListener.STATUS_IDLE);
             FileSenderListener.getInstance().setBounds(simpleParser.getBounds());
-            GCodeVisualizerRenderer.getInstance().setBounds(simpleParser.getBounds());
-            visualizerView.requestRender();
+            renderer.setBounds(simpleParser.getBounds());
+            EventBus.getDefault().post(
+                    new GcodeFileParseEvent(GcodeFileParseEvent.Type.ParsingComplete));
         }
 
         private void initFileSenderListener() {
             FileSenderListener.getInstance().setRowsInFile(0);
             FileSenderListener.getInstance().setRowsSent(0);
             FileSenderListener.getInstance().setBounds(null);
-            GCodeVisualizerRenderer.getInstance().resetVertices();
+            FileSenderListener.getInstance().clearToolsUsed();
+            renderer.resetVertices();
+        }
+
+        @Override
+        public void prepareTool(int number) {
+            FileSenderListener.getInstance().addToolUsed(number);
+        }
+
+        @Override
+        public void move(double x, double y, double z) {
+            renderer.move(x, y, z);
+        }
+
+        @Override
+        public void rapidMove(double x, double y, double z) {
+            renderer.rapidMove(x, y, z);
         }
     }
 
@@ -461,6 +482,14 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
     public void onGrblErrorEvent(GrblErrorEvent event) {
         if (!(event.getErrorCode() == 20 && machineStatus.getIgnoreError20())) {
             stopFileStreaming();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGcodeFileParseEvent(GcodeFileParseEvent event) {
+        if (event.getType() == GcodeFileParseEvent.Type.ParsingComplete) {
+            visualizerView.requestRender();
+            toolListAdapter.notifyDataSetChanged();
         }
     }
 

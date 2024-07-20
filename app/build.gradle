@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "in.co.gorest.grblcontroller"
-        minSdkVersion 24
+        minSdkVersion 33
         targetSdkVersion 33
         versionCode 38
         versionName "2.57"
