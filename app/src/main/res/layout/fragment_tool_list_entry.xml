@@ -2,15 +2,15 @@
 
     <data>
 
-        <import type="in.co.gorest.grblcontroller.util.ToolDatabase" />
+        <import type="in.co.gorest.grblcontroller.util.ToolLibrary" />
 
         <variable
             name="tool"
             type="Integer" />
 
         <variable
-            name="toolDatabase"
-            type="ToolDatabase" />
+            name="toolLibrary"
+            type="ToolLibrary" />
     </data>
 
     <LinearLayout
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="@{toolDatabase.getTool(tool).description}" />
+            android:text="@{toolLibrary.getTool(tool).description}" />
 
     </LinearLayout>
 

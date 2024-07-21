@@ -35,14 +35,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import in.co.gorest.grblcontroller.events.UiToastEvent;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
 import in.co.gorest.grblcontroller.model.Constants;
-import in.co.gorest.grblcontroller.util.ToolDatabase;
+import in.co.gorest.grblcontroller.util.ToolLibrary;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -64,29 +62,22 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragment implements
             SharedPreferences.OnSharedPreferenceChangeListener {
 
-        private boolean cacheToolsFile(Uri uri) throws IOException {
-            InputStream input = getContext().getContentResolver().openInputStream(uri);
-            FileOutputStream output = getContext().openFileOutput(Constants.TOOL_LIBRARY_FILE_NAME,
-                    Context.MODE_PRIVATE);
-            if (input != null) {
-                input.transferTo(output);
-                input.close();
-            }
-            return true;
-        }
-
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
             if (requestCode == Constants.FILE_PICKER_CSV_REQUEST_CODE
                     && resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getData();
+                if (uri == null) {
+                    return;
+                }
                 new Thread(() -> {
                     try {
-                        if (cacheToolsFile(uri)) {
-                            ToolDatabase.getInstance().load(
-                                    getContext().openFileInput(Constants.TOOL_LIBRARY_FILE_NAME));
-                        }
+                        ToolLibrary.INSTANCE.loadFromFusionCsv(
+                                getContext().getContentResolver().openInputStream(uri));
+                        ToolLibrary.INSTANCE.save(
+                                getContext().openFileOutput(Constants.TOOL_LIBRARY_FILE_NAME,
+                                        Context.MODE_PRIVATE));
                     } catch (IOException ignored) {
                     }
                 }).start();

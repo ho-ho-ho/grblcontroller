@@ -2,11 +2,11 @@
 
     <data>
 
-        <import type="in.co.gorest.grblcontroller.util.ToolDatabase" />
+        <import type="in.co.gorest.grblcontroller.util.ToolLibrary" />
 
         <variable
-            name="toolDatabase"
-            type="ToolDatabase" />
+            name="toolLibrary"
+            type="ToolLibrary" />
     </data>
 
     <LinearLayout
@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{toolDatabase.tools.size + ` Tools available`}" />
+            android:text="@{toolLibrary.tools.size + ` Tools available`}" />
 
     </LinearLayout>
 </layout>

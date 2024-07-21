@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.databinding.FragmentToolListEntryBinding;
 import in.co.gorest.grblcontroller.listeners.FileSenderListener;
-import in.co.gorest.grblcontroller.util.ToolDatabase;
+import in.co.gorest.grblcontroller.util.ToolLibrary;
 
 public class ToolListAdapter extends BaseAdapter {
     private final Context context;
@@ -48,7 +48,7 @@ public class ToolListAdapter extends BaseAdapter {
             binding = (FragmentToolListEntryBinding) convertView.getTag();
         }
 
-        binding.setToolDatabase(ToolDatabase.getInstance());
+        binding.setToolLibrary(ToolLibrary.INSTANCE);
         binding.setTool(fileSenderListener.getToolsUsed().get(position));
 
         convertView.setTag(binding);

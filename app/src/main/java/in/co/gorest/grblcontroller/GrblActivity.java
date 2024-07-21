@@ -84,7 +84,7 @@ import in.co.gorest.grblcontroller.service.GrblBluetoothSerialService;
 import in.co.gorest.grblcontroller.ui.BaseFragment;
 import in.co.gorest.grblcontroller.ui.GrblFragmentPagerAdapter;
 import in.co.gorest.grblcontroller.util.GrblUtils;
-import in.co.gorest.grblcontroller.util.ToolDatabase;
+import in.co.gorest.grblcontroller.util.ToolLibrary;
 
 public abstract class GrblActivity extends AppCompatActivity implements
         BaseFragment.OnFragmentInteractionListener {
@@ -248,7 +248,7 @@ public abstract class GrblActivity extends AppCompatActivity implements
         if (sharedPref.getBoolean(getString(R.string.preference_use_tool_library), false)) {
             try {
                 FileInputStream toolsFile = openFileInput(Constants.TOOL_LIBRARY_FILE_NAME);
-                ToolDatabase.getInstance().load(toolsFile);
+                ToolLibrary.INSTANCE.load(toolsFile);
             } catch (FileNotFoundException ignored) {
             }
         }

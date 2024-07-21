@@ -216,7 +216,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="@{fileSender.rowsSent.toString() + `/` + fileSender.rowsInFile.toString()}" />
+                    android:text="@{fileSender.rowsSent.toString() + ` / ` + fileSender.rowsInFile.toString()}" />
             </LinearLayout>
 
             <LinearLayout

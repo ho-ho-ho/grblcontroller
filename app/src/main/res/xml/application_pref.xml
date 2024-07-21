@@ -121,10 +121,10 @@
     </PreferenceScreen>
 
     <PreferenceScreen
-        android:key="probing_preferences_flashcard"
-        android:icon="@drawable/ic_open_with_black_24dp"
-        android:title="@string/text_probing_preferences"
-        android:summary="customize probing panel preferences">
+        android:key="tool_library_preferences_flashcard"
+        android:icon="@drawable/baseline_list_24"
+        android:title="Tool library preferences"
+        android:summary="set up tool library">
 
         <Preference android:title="Tool library preferences" />
 
@@ -135,6 +135,7 @@
 
         <Preference
             android:key="filePicker"
+            android:icon="@drawable/baseline_list_24"
             android:persistent="false"
             android:title="Import a fusion tool library (.csv)" />
     </PreferenceScreen>
