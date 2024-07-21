@@ -8,33 +8,35 @@ import android.widget.BaseAdapter;
 
 import androidx.databinding.DataBindingUtil;
 
+import java.util.List;
+
 import in.co.gorest.grblcontroller.R;
 import in.co.gorest.grblcontroller.databinding.FragmentToolListEntryBinding;
-import in.co.gorest.grblcontroller.listeners.FileSenderListener;
 import in.co.gorest.grblcontroller.util.ToolLibrary;
 
+// shows a list of tools (from a List<Integer>)
 public class ToolListAdapter extends BaseAdapter {
     private final Context context;
-    private final FileSenderListener fileSenderListener;
+    private final List<Integer> list;
 
-    public ToolListAdapter(Context context) {
+    public ToolListAdapter(Context context, List<Integer> list) {
         this.context = context;
-        fileSenderListener = FileSenderListener.getInstance();
+        this.list = list;
     }
 
     @Override
     public int getCount() {
-        return fileSenderListener.getToolsUsed().size();
+        return list.size();
     }
 
     @Override
     public Integer getItem(int position) {
-        return fileSenderListener.getToolsUsed().get(position);
+        return list.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return fileSenderListener.getToolsUsed().get(position);
+        return list.get(position);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class ToolListAdapter extends BaseAdapter {
         }
 
         binding.setToolLibrary(ToolLibrary.INSTANCE);
-        binding.setTool(fileSenderListener.getToolsUsed().get(position));
+        binding.setTool(list.get(position));
 
         convertView.setTag(binding);
         return convertView;

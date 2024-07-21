@@ -95,7 +95,7 @@ public class FileSenderTabFragment extends BaseFragment implements View.OnClickL
         sharedPref = EnhancedSharedPreferences.getInstance(
                 requireActivity().getApplicationContext(),
                 getString(R.string.shared_preference_key));
-        toolListAdapter = new ToolListAdapter(getContext());
+        toolListAdapter = new ToolListAdapter(getContext(), fileSender.getToolsUsed());
     }
 
     @Override

@@ -13,15 +13,21 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 
+// we're using a List instead of a Set because a gcode file can use the same tool multiple times
+// (i.e. T12 -> T25 -> T32 -> T12 )
+typealias ToolList = ArrayList<Tool>
+
 object ToolLibrary : BaseObservable() {
-    val tools: ArrayList<Tool> = ArrayList()
+    val tools: ToolList = ToolList()
         @Bindable
         get
 
     fun getTool(number: Int): Tool? = tools.find { tool -> tool.number == number }
 
+    fun getToolNumbers(): List<Int> = tools.map { tool -> tool.number }
+
     fun loadFromFusionCsv(stream: InputStream) {
-        val tools = ArrayList<Tool>()
+        val tools = ToolList()
         val isr = InputStreamReader(stream)
         val reader = CsvReader.builder().ofNamedCsvRecord(isr)
         for (record in reader) {
@@ -43,6 +49,7 @@ object ToolLibrary : BaseObservable() {
 
         this.tools.clear()
         this.tools += tools
+        this.tools.sortBy { t -> t.number }
         notifyPropertyChanged(BR.tools)
     }
 
@@ -52,7 +59,8 @@ object ToolLibrary : BaseObservable() {
             this.tools += Json.Default.decodeFromStream(
                 ListSerializer(Tool.serializer()),
                 stream
-            ) as ArrayList<Tool>
+            ) as ToolList
+            this.tools.sortBy { t -> t.number }
             notifyPropertyChanged(BR.tools)
         } catch (ignored: IllegalArgumentException) {
         }

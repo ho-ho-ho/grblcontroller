@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.databinding.DataBindingUtil;
 
 import in.co.gorest.grblcontroller.R;
+import in.co.gorest.grblcontroller.adapters.ToolListAdapter;
 import in.co.gorest.grblcontroller.databinding.FragmentCamBinding;
 import in.co.gorest.grblcontroller.helpers.EnhancedSharedPreferences;
 import in.co.gorest.grblcontroller.listeners.MachineStatusListener;
@@ -40,6 +42,10 @@ public class CamFragment extends BaseFragment {
                 container, false);
         binding.setToolLibrary(ToolLibrary.INSTANCE);
         View view = binding.getRoot();
+
+        ListView toolLibraryView = view.findViewById(R.id.tool_library_view);
+        toolLibraryView.setAdapter(
+                new ToolListAdapter(getContext(), ToolLibrary.INSTANCE.getToolNumbers()));
 
         return view;
     }
