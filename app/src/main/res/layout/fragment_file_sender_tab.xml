@@ -41,7 +41,7 @@
                 <Button
                     style="@style/IconOnlyButton"
                     android:id="@+id/select_gcode_file"
-                    android:enabled="@{!(machineStatus.state.equals(machineStatus.STATE_IDLE) || machineStatus.state.equals(machineStatus.STATE_CHECK)) &amp;&amp; fileSender.status.equals(fileSender.STATUS_IDLE)}"
+                    android:enabled="@{(machineStatus.state.equals(machineStatus.STATE_IDLE) || machineStatus.state.equals(machineStatus.STATE_CHECK)) &amp;&amp; fileSender.status.equals(fileSender.STATUS_IDLE)}"
                     android:layout_alignParentEnd="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -164,7 +164,6 @@
                     </LinearLayout>
 
                 </LinearLayout>
-                >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:padding="4dp"
@@ -176,9 +175,7 @@
                         android:id="@+id/file_sender_visualizer"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        app:layout_constraintDimensionRatio="H,1:1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintDimensionRatio="H,1:1" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
